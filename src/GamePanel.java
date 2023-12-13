@@ -1,19 +1,22 @@
-import java.awt.Color;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Map;
+import java.awt.Graphics;
 
 import javax.swing.*;
 
 
 public class GamePanel extends JLayeredPane {
 
+
+
     private Player player1;
     private Player player2;
+
 
     private Player myself;
     private String userName;
@@ -29,6 +32,8 @@ public class GamePanel extends JLayeredPane {
     public boolean threadFlag = true;
     private ObjectOutputStream oos;
 
+    private Stage1 stage1; //맵추가
+
     /**
      * Create the panel.
      */
@@ -39,8 +44,10 @@ public class GamePanel extends JLayeredPane {
         setOpaque(true);
         this.setBackground(Color.WHITE);
 
-        player1 = new Player(1, 40, 480);
-        player2 = new Player(2, 760, 480);
+        player1 = new Player(1, 200, 200);
+        player2 = new Player(2, 205, 300);
+
+       stage1 = new Stage1(player1, player2);
 
         add(player1, new Integer(10));
         add(player2, new Integer(10));
@@ -56,13 +63,24 @@ public class GamePanel extends JLayeredPane {
         this.addKeyListener(new KeyListener());
         this.requestFocus();
         this.setFocusable(true);
+        setPreferredSize(new Dimension(1600, 900));
 
         this.gameThread = new GameThread();
         gameThread.start();
 
+
+
 //		this.sendThread = new SendThread();
 //		sendThread.start();
     }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        stage1.draw(g); // Stage1 그리기
+    }
+
+
 
     public String getUserName() {
         return userName;
