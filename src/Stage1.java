@@ -4,6 +4,10 @@ import java.util.ArrayList;
 public class Stage1 {
     private ArrayList<Platform> platforms;
     private Player player1, player2;
+    // 패널의 크기
+    int panelWidth = 730;
+    int panelHeight = 730;
+    int borderThickness = 20;
 
     public Stage1(Player player1, Player player2) {
         this.player1 = player1;
@@ -11,8 +15,17 @@ public class Stage1 {
         platforms = new ArrayList<>();
 
 
-        // 플랫폼 추가
-        platforms.add(new Platform(0, 0, 730, 20, Color.BLACK));
+        // 블럭추가
+
+        // 상단
+        platforms.add(new Platform(0, 0, panelWidth, borderThickness, Color.ORANGE));
+        // 하단
+        platforms.add(new Platform(0, panelHeight - borderThickness, panelWidth, borderThickness, Color.ORANGE));
+        // 왼쪽
+        platforms.add(new Platform(0, 0, borderThickness, panelHeight, Color.ORANGE));
+        // 오른쪽
+        platforms.add(new Platform(panelWidth - borderThickness, 0, borderThickness, panelHeight, Color.ORANGE));
+        // 계단
         platforms.add(new Platform(100, 500, 100, 20, Color.RED));
         platforms.add(new Platform(250, 400, 100, 20, Color.YELLOW));
         platforms.add(new Platform(400, 300, 100, 20, Color.GREEN));

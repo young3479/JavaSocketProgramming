@@ -16,23 +16,22 @@ public class GameClient {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-
         // 플레이어 생성
         Player player1 = new Player(1, 200, 200, Color.red);
         Player player2 = new Player(2, 205, 300, Color.yellow);
 
 
-        GamePanel gamePanel = new GamePanel(player1, player2); // 수정된 생성자
-        // 플레이어를 게임 패널에 추가
-//        gamePanel.add(player1);
-//        gamePanel.add(player2);
-
+        GamePanel gamePanel = new GamePanel(player1, player2);
+        frame.getContentPane().add(gamePanel);
+        //타이틀 바 제외하고 730 X 730을 생성
+        gamePanel.setPreferredSize(new Dimension(730, 730));
 
         // 서버 연결 설정 (IP 주소와 포트 번호에 따라)
         gamePanel.connectToServer("127.0.0.1", 30000);
 
-        frame.add(gamePanel);
-        frame.setSize(730, 730); // 적절한 크기로 설정
+        frame.pack();
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 }
