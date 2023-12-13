@@ -1,5 +1,4 @@
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Stage1 {
@@ -13,10 +12,11 @@ public class Stage1 {
 
 
         // 플랫폼 추가
-        platforms.add(new Platform(200, 500, 100, 20));
-        platforms.add(new Platform(350, 400, 100, 20));
-        platforms.add(new Platform(500, 300, 100, 20));
-        platforms.add(new Platform(650, 200, 100, 20));
+        platforms.add(new Platform(0, 0, 730, 20, Color.BLACK));
+        platforms.add(new Platform(100, 500, 100, 20, Color.RED));
+        platforms.add(new Platform(250, 400, 100, 20, Color.YELLOW));
+        platforms.add(new Platform(400, 300, 100, 20, Color.GREEN));
+        platforms.add(new Platform(550, 200, 100, 20, Color.BLUE));
     }
 
 

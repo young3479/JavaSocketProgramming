@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2a960ee4-1a93-4a73-ac35-196c54592bb1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/GameClient$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/GameClient.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/GamePanel$GameThread.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/GamePanel$KeyListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/GamePanel.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/JavaObjServer$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/JavaObjServer$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/JavaObjServer$AcceptServer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/JavaObjServer$UserService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/JavaObjServer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/Player$moveThread.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/Player.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/player1.png" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/player1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/player2.png" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/player2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Platform.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Platform.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Stage1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Stage1.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2ZUKJiRe2DW4k8Z0ljuc0UyqxyF" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/chaeyoung/FinalProjects/NetworkProjects",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="GameClient" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="GameClient" />
+      <module name="project" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.GameClient" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2a960ee4-1a93-4a73-ac35-196c54592bb1" name="Changes" comment="" />
+      <created>1702471148465</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1702471148465</updated>
+      <workItem from="1702471149539" duration="29000" />
+      <workItem from="1702471274114" duration="5773000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

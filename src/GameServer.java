@@ -27,7 +27,7 @@ import javax.swing.border.EmptyBorder;
 
 
 
-public class JavaObjServer extends JFrame {
+public class GameServer extends JFrame {
 
     /**
      *
@@ -62,7 +62,7 @@ public class JavaObjServer extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    JavaObjServer frame = new JavaObjServer();
+                    GameServer frame = new GameServer();
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -74,7 +74,7 @@ public class JavaObjServer extends JFrame {
     /**
      * Create the frame.
      */
-    public JavaObjServer() {
+    public GameServer() {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 338, 440);

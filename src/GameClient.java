@@ -32,7 +32,7 @@ public class GameClient {
         gamePanel.connectToServer("127.0.0.1", 30000);
 
         frame.add(gamePanel);
-        frame.setSize(800, 600); // 적절한 크기로 설정
+        frame.setSize(730, 730); // 적절한 크기로 설정
         frame.setVisible(true);
     }
 }
