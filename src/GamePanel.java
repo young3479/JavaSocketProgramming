@@ -37,20 +37,19 @@ public class GamePanel extends JLayeredPane {
     /**
      * Create the panel.
      */
-    public GamePanel() {
-
+    public GamePanel(Player player1, Player player2) {
+        this.player1 = player1;
+        this.player2 = player2;
 
         // 배경 색 설정
         setOpaque(true);
         this.setBackground(Color.WHITE);
 
-        player1 = new Player(1, 200, 200);
-        player2 = new Player(2, 205, 300);
 
        stage1 = new Stage1(player1, player2);
 
-        add(player1, new Integer(10));
-        add(player2, new Integer(10));
+        //add(player1, new Integer(10));
+        //add(player2, new Integer(10));
 
 
 
@@ -63,7 +62,7 @@ public class GamePanel extends JLayeredPane {
         this.addKeyListener(new KeyListener());
         this.requestFocus();
         this.setFocusable(true);
-        setPreferredSize(new Dimension(1600, 900));
+        setPreferredSize(new Dimension(1280, 720));
 
         this.gameThread = new GameThread();
         gameThread.start();
@@ -78,6 +77,8 @@ public class GamePanel extends JLayeredPane {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         stage1.draw(g); // Stage1 그리기
+        player1.draw(g);
+        player2.draw(g);
     }
 
 
@@ -123,69 +124,69 @@ public class GamePanel extends JLayeredPane {
 
     }
 
-    public void movePlayerTrue(String[] playerInfo) {
-        String KeyCode = playerInfo[1];
-        //System.out.println("GamePanel ###### " + playerInfo[1]);
-
-        Player other;
-        if (playerInfo[0].equals("1"))
-            other = player1;
-        else
-            other = player2;
-
-        switch (KeyCode) {
-            case "VK_DOWN":
-                other.setMoveDown(true);
-                break;
-            case "VK_UP":
-                if (other.getAbleToJump()) {
-                    other.setMoveUp(true);
-                    other.setJumping(true);
-                }
-                break;
-            case "VK_LEFT":
-                other.setMoveLeft(true);
-                break;
-            case "VK_RIGHT":
-                other.setMoveRight(true);
-                break;
-            case "VK_SPACE":
-                other.setShoot(true);
-                break;
-            case "VK_ESCAPE":
-                System.exit(0);
-                break;
-        }
-    }
-
-    public void movePlayerFalse(String[] playerInfo) {
-        String KeyCode = playerInfo[1];
-        //System.out.println("GamePanel ###### " + playerInfo[0] + ":" + playerInfo[1]);
-        Player other;
-        if (Integer.parseInt(playerInfo[0]) == 1)
-            other = player1;
-        else
-            other = player2;
-
-        switch (KeyCode) {
-            case "VK_DOWN":
-                other.setMoveDown(false);
-                break;
-            case "VK_UP":
-                other.setMoveUp(false);
-                break;
-            case "VK_LEFT":
-                other.setMoveLeft(false);
-                break;
-            case "VK_RIGHT":
-                other.setMoveRight(false);
-                break;
-            case "VK_SPACE":
-                other.setShoot(false);
-
-                break;
-        }
-    }
+//    public void movePlayerTrue(String[] playerInfo) {
+//        String KeyCode = playerInfo[1];
+//        //System.out.println("GamePanel ###### " + playerInfo[1]);
+//
+//        Player other;
+//        if (playerInfo[0].equals("1"))
+//            other = player1;
+//        else
+//            other = player2;
+//
+//        switch (KeyCode) {
+//            case "VK_DOWN":
+//                other.setMoveDown(true);
+//                break;
+//            case "VK_UP":
+//                if (other.getAbleToJump()) {
+//                    other.setMoveUp(true);
+//                    other.setJumping(true);
+//                }
+//                break;
+//            case "VK_LEFT":
+//                other.setMoveLeft(true);
+//                break;
+//            case "VK_RIGHT":
+//                other.setMoveRight(true);
+//                break;
+//            case "VK_SPACE":
+//                other.setShoot(true);
+//                break;
+//            case "VK_ESCAPE":
+//                System.exit(0);
+//                break;
+//        }
+//    }
+//
+//    public void movePlayerFalse(String[] playerInfo) {
+//        String KeyCode = playerInfo[1];
+//        //System.out.println("GamePanel ###### " + playerInfo[0] + ":" + playerInfo[1]);
+//        Player other;
+//        if (Integer.parseInt(playerInfo[0]) == 1)
+//            other = player1;
+//        else
+//            other = player2;
+//
+//        switch (KeyCode) {
+//            case "VK_DOWN":
+//                other.setMoveDown(false);
+//                break;
+//            case "VK_UP":
+//                other.setMoveUp(false);
+//                break;
+//            case "VK_LEFT":
+//                other.setMoveLeft(false);
+//                break;
+//            case "VK_RIGHT":
+//                other.setMoveRight(false);
+//                break;
+//            case "VK_SPACE":
+//                other.setShoot(false);
+//
+//                break;
+//        }
+//    }
     // 서버와의 연결을 설정하는 메소드
     public void connectToServer(String ip, int port) {
         try {
