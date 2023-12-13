@@ -274,17 +274,11 @@ public class JavaObjServer extends JFrame {
         }
         public void WriteOne(String msg, String code) {
             try {
-                // dos.writeUTF(msg);
-//				byte[] bb;
-//				bb = MakePacket(msg);
-//				dos.write(bb, 0, bb.length);
                 ChatMsg obcm = new ChatMsg("SERVER", code, msg);
                 if(obcm!=null) oos.writeObject(obcm);
             } catch (IOException e) {
                 AppendText("dos.writeObject() error");
                 try {
-//					dos.close();
-//					dis.close();
                     ois.close();
                     oos.close();
                     client_socket.close();
@@ -317,9 +311,6 @@ public class JavaObjServer extends JFrame {
         }
 
 
-
-
-
         public void WriteOneObject(Object ob) {
             try {
                 oos.writeObject(ob);
@@ -344,24 +335,7 @@ public class JavaObjServer extends JFrame {
         public void run() {
             while (true) { // 사용자 접속을 계속해서 받기 위해 while문
                 try {
-                    // String msg = dis.readUTF();
-//					byte[] b = new byte[BUF_LEN];
-//					int ret;
-//					ret = dis.read(b);
-//					if (ret < 0) {
-//						AppendText("dis.read() < 0 error");
-//						try {
-//							dos.close();
-//							dis.close();
-//							client_socket.close();
-//							Logout();
-//							break;
-//						} catch (Exception ee) {
-//							break;
-//						} // catch문 끝
-//					}
-//					String msg = new String(b, "euc-kr");
-//					msg = msg.trim(); // 앞뒤 blank NULL, \n 모두 제거
+
                     Object obcm = null;
                     String msg = null;
                     ChatMsg cm = null;

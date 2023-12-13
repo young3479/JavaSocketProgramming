@@ -14,8 +14,16 @@ public class GameClient {
         JFrame frame = new JFrame("Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-//        ScorePanel scorePanel = new ScorePanel(); // ScorePanel 인스턴스 생성
         GamePanel gamePanel = new GamePanel(); // GamePanel 인스턴스 생성
+
+        // 플레이어 생성
+        Player player1 = new Player(1, 40, 480); // 예시 좌표
+        Player player2 = new Player(2, 760, 480); // 예시 좌표
+
+        // 플레이어를 게임 패널에 추가
+        gamePanel.add(player1);
+        gamePanel.add(player2);
+
 
         // 서버 연결 설정 (IP 주소와 포트 번호에 따라)
         gamePanel.connectToServer("127.0.0.1", 30000);

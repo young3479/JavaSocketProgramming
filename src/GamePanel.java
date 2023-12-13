@@ -22,7 +22,6 @@ public class GamePanel extends JLayeredPane {
 
     private Map map;
 
-//    private ScorePanel scorePanel = null;
     private int score = 0;
     private GameThread gameThread;
 
@@ -35,15 +34,14 @@ public class GamePanel extends JLayeredPane {
      */
     public GamePanel() {
 
-//        this.scorePanel = scorePanel;
 
         // 배경 색 설정
         setOpaque(true);
         this.setBackground(Color.WHITE);
 
-        player1 = new Player(1);
-        player2 = new Player(2);
-//		player2.setX(Settings.SCENE_WIDTH-10);
+        player1 = new Player(1, 40, 480);
+        player2 = new Player(2, 760, 480);
+
         add(player1, new Integer(10));
         add(player2, new Integer(10));
 
@@ -62,11 +60,6 @@ public class GamePanel extends JLayeredPane {
         this.gameThread = new GameThread();
         gameThread.start();
 
-        // 키 리스너 추가
-        KeyListener keyListener = new KeyListener();
-        this.addKeyListener(keyListener);
-        this.setFocusable(true);
-
 //		this.sendThread = new SendThread();
 //		sendThread.start();
     }
@@ -77,15 +70,7 @@ public class GamePanel extends JLayeredPane {
 
     public void meetBubbleMonster(int bubbleNum, int monsterNum, int x, int y) {
 
-
-//		System.out
-//		.println("!!!!!!!!!!! send items : " + bubbleNum + "," +monsterNum + "," + x + "," + y);
-
     }
-
-
-
-
 
 
     class GameThread extends Thread {
@@ -103,11 +88,6 @@ public class GamePanel extends JLayeredPane {
             }
         }
     }
-
-
-
-
-
 
 
     public void movePlayerPosition(String[] playerInfo) {
@@ -257,7 +237,4 @@ public class GamePanel extends JLayeredPane {
     }
 
 
-//    public ScorePanel getScorePanel() {
-//        return this.scorePanel;
-//    }
 }
