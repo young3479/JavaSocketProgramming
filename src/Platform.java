@@ -1,20 +1,20 @@
+import javax.swing.*;
 import java.awt.*;
 
 class Platform {
     private int x, y, width, height;
-    private Color color;
+    private Image image;
 
-    public Platform(int x, int y, int width, int height, Color color) {
+    public Platform(int x, int y, int width, int height, String imagePath) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.color = color;
+        this.image = new ImageIcon(getClass().getResource(imagePath)).getImage();
     }
 
     public void draw(Graphics g) {
-        g.setColor(color);
-        g.fillRect(x, y, width, height);
+        g.drawImage(image, x, y, width, height, null);
     }
 
     public Rectangle getBounds() {

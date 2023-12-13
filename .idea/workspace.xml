@@ -5,15 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2a960ee4-1a93-4a73-ac35-196c54592bb1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Image/block/block.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/project/JavaObjServer$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/project/JavaObjServer$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/project/JavaObjServer$AcceptServer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/project/JavaObjServer$UserService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/project/JavaObjServer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/Platform.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/Platform.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/project/Stage1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/Stage1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/player1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/player2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Platform.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Platform.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Stage1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Stage1.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/player1.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/Image/player/player1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/player2.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/Image/player/player2.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +49,13 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/Image/block" />
+      <recent name="$PROJECT_DIR$/src/Image/player" />
+      <recent name="$PROJECT_DIR$/src/Image" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="GameClient" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="GameClient" />
@@ -71,7 +79,7 @@
       <option name="presentableId" value="Default" />
       <updated>1702471148465</updated>
       <workItem from="1702471149539" duration="29000" />
-      <workItem from="1702471274114" duration="6965000" />
+      <workItem from="1702471274114" duration="8455000" />
     </task>
     <servers />
   </component>
