@@ -186,16 +186,6 @@ public class GameServer extends JFrame {
                 oos.flush();
                 ois = new ObjectInputStream(client_socket.getInputStream());
 
-                // line1 = dis.readUTF();
-                // /login user1 ==> msg[0] msg[1]
-//				byte[] b = new byte[BUF_LEN];
-//				dis.read(b);
-//				String line1 = new String(b);
-//
-//				//String[] msg = line1.split(" ");
-//				//UserName = msg[1].trim();
-//				UserStatus = "O"; // Online 상태
-//				Login();
             } catch (Exception e) {
                 AppendText("userService error");
             }
@@ -210,7 +200,6 @@ public class GameServer extends JFrame {
         }
 
 
-
         public void Login() {
             AppendText("새로운 참가자 " + UserName + " 입장.");
             //WriteOne("Welcome to Java chat server\n", "101");
@@ -218,13 +207,6 @@ public class GameServer extends JFrame {
             String msg = "[" + UserName + "]님이 입장 하였습니다.\n";
         }
 
-//        public void Logout() {
-//            String msg = "[" + UserName + "]님이 퇴장 하였습니다.\n";
-//            UserVec.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
-//            WriteAll(msg, "104"); // 나를 제외한 다른 User들에게 전송
-//            reduceRoomCount(getRoomNum());
-//            AppendText("사용자 " + "[" + UserName + "] 퇴장. 현재 참가자 수 " + UserVec.size());
-//        }
 
         public void Logout() {
             String msg = "[" + UserName + "]님이 퇴장 하였습니다.\n";
@@ -243,15 +225,6 @@ public class GameServer extends JFrame {
             }
         }
 
-
-        // 모든 User들에게 Object를 방송. 채팅 message와 image object를 보낼 수 있다
-        public void WriteAllObject(Object ob) {
-            for (int i = 0; i < user_vc.size(); i++) {
-                UserService user = (UserService) user_vc.elementAt(i);
-                if (user.UserStatus == "O")
-                    user.WriteOneObject(ob);
-            }
-        }
 
         // 나를 제외한 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
         public void WriteOthers(String str, String code) {
@@ -292,24 +265,6 @@ public class GameServer extends JFrame {
                 Logout(); // 에러가난 현재 객체를 벡터에서 지운다
             }
         }
-        // Windows 처럼 message 제외한 나머지 부분은 NULL 로 만들기 위한 함수
-        public byte[] MakePacket(String msg) {
-            byte[] packet = new byte[BUF_LEN];
-            byte[] bb = null;
-            int i;
-            for (i = 0; i < BUF_LEN; i++)
-                packet[i] = 0;
-            try {
-                bb = msg.getBytes("euc-kr");
-            } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            for (i = 0; i < bb.length; i++)
-                packet[i] = bb[i];
-            return packet;
-        }
-
 
         public void WriteOneObject(Object ob) {
             try {
@@ -386,36 +341,10 @@ public class GameServer extends JFrame {
 
                         WriteOthers(cm.getData(),"403");
                         WriteOne(cm.getData(),"403");
-                    } else if (cm.getCode().matches("501")) { // bubble이랑 monster이랑 만남
-                        System.out.println("501");
-
-                        WriteOthers(cm.getData(),"501");
-                        WriteOne(cm.getData(),"501");
-                    } else if (cm.getCode().matches("502")) { // bubble 천장 랜덤 움직임
-                        System.out.println("502");
-
-                        WriteOthers(cm.getData(),"502");
-                    } else if (cm.getCode().matches("601")) { // bubble 터짐 > item create
-                        System.out.println("601");
-
-                        WriteOthers(cm.getData(),"601");
-                        WriteOne(cm.getData(),"601");
-                    } else if (cm.getCode().matches("602")) { // item 위치 조정
-                        System.out.println("602");
-
-                        WriteOthers(cm.getData(),"602");
-                        WriteOne(cm.getData(),"602");
-                    }   else if (cm.getCode().matches("603")) { // item 점수 증가
-                        System.out.println("603");
-
-                        WriteOthers(cm.getData(),"603");
-                        WriteOne(cm.getData(),"603");
                     }
                 } catch (IOException e) {
                     AppendText("ois.readObject() error");
                     try {
-//						dos.close();
-//						dis.close();
                         ois.close();
                         oos.close();
                         client_socket.close();
@@ -423,10 +352,10 @@ public class GameServer extends JFrame {
                         break;
                     } catch (Exception ee) {
                         break;
-                    } // catch문 끝
-                } // 바깥 catch문끝
-            } // while
-        } // run
+                    }
+                }
+            }
+        }
     }
 
 }

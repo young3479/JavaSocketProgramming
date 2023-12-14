@@ -28,10 +28,11 @@ public class Stage1 {
         platforms.add(new Platform(panelWidth - borderThickness, 0, borderThickness, panelHeight, "Image/block/block3.png"));
 
         // 계단
-        platforms.add(new Platform(100, 500, 550, 20, "Image/block/block2.png"));
+        platforms.add(new Platform(100, 500, 520, 20, "Image/block/block2.png"));
         platforms.add(new Platform(250, 400, 100, 20, "Image/block/block2.png"));
         platforms.add(new Platform(400, 300, 100, 20, "Image/block/block2.png"));
-        platforms.add(new Platform(550, 200, 100, 20, "Image/block/block2.png"));
+        platforms.add(new Platform(590, 200, 100, 20, "Image/block/block2.png"));
+        platforms.add(new Platform(40, 200, 100, 20, "Image/block/block2.png"));
     }
 
 
