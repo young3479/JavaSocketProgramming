@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Map;
 import java.awt.Graphics;
 
@@ -13,7 +14,7 @@ import javax.swing.*;
 public class GamePanel extends JLayeredPane {
 
 
-
+    private ArrayList<Platform> platforms;
     private Player player1;
     private Player player2;
 
@@ -46,7 +47,7 @@ public class GamePanel extends JLayeredPane {
         this.setBackground(Color.WHITE);
 
 
-       stage1 = new Stage1(player1, player2);
+       this.stage1 = new Stage1(player1, player2);
 
         //add(player1, new Integer(10));
         //add(player2, new Integer(10));
@@ -81,6 +82,52 @@ public class GamePanel extends JLayeredPane {
         player2.draw(g);
     }
 
+    // 게임 루프 - 플레이어 상태 업데이트 및 화면 다시 그리기
+    public void gameLoop() {
+        while(true) {
+            updateGame();
+            player1.update();
+            player2.update();
+            repaint(); // 화면 다시 그리기
+
+            // 시간 지연을 위한 대기 (예: 16ms, 대략 60FPS)
+            try {
+                Thread.sleep(16);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public void updateGame() {
+        // 플레이어1의 움직임 업데이트
+        updatePlayer(player1);
+        // 플레이어2의 움직임 업데이트 (네트워크 데이터를 기반으로 할 수 있음)
+        updatePlayer(player2);
+
+        stage1.checkCollisions();
+        repaint();
+    }
+
+    private void updatePlayer(Player player) {
+//        if (leftPressed) {
+//            player.setVelocityX(-5);
+//        } else if (rightPressed) {
+//            player.setVelocityX(5);
+//        } else {
+//            player.setVelocityX(0);
+//        }
+//
+//        if (upPressed && player.isOnGround()) {
+//            player.jump();
+//        }
+
+        player.update();
+    }
+
+
+
 
 
     public String getUserName() {
@@ -98,7 +145,6 @@ public class GamePanel extends JLayeredPane {
         public void run() {
             while (true) {
                 try {
-
                     repaint();
                     Thread.sleep(20);
                 } catch (InterruptedException e) {
@@ -126,7 +172,7 @@ public class GamePanel extends JLayeredPane {
 
 //    public void movePlayerTrue(String[] playerInfo) {
 //        String KeyCode = playerInfo[1];
-//        //System.out.println("GamePanel ###### " + playerInfo[1]);
+//        System.out.println("GamePanel ###### " + playerInfo[1]);
 //
 //        Player other;
 //        if (playerInfo[0].equals("1"))

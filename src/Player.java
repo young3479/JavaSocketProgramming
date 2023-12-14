@@ -1,7 +1,7 @@
 import java.awt.*;
 import java.io.*;
 import java.awt.Rectangle;
-
+//오픈소스 사용안한 클래스
 
 
 // 플레이어 클래스 수정
@@ -82,15 +82,6 @@ class Player implements Serializable  { //12142322
     }
 }
 
-//// 메인 게임 클래스
-//public class Game {
-//    // 게임 초기화 및 루프 관련 코드...
-//
-//    public void gameLoop() {
-//        // 게임 루프 코드...
-//        // 네트워크 상태 업데이트를 포함합니다.
-//    }
-//
-//    // 게임 시작 메서드 등 기타 메서드...
-//}
+
+
 

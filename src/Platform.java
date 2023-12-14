@@ -1,6 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-
+//오픈소스 안쓴 클래스
 class Platform {
     private int x, y, width, height;
     private Image image;

@@ -370,6 +370,8 @@ public class GameServer extends JFrame {
                         WriteOthers(cm.getData(),"300");
                         WriteOne(cm.getData(),"300");
                     } else if (cm.getCode().matches("401")) { // player 움직임 keyPressed
+                        String actionMessage = "[" + UserName + "] pressed " + cm.getData();
+                        WriteAll(actionMessage, "401");
                         System.out.println("401");
 
                         WriteOthers(cm.getData(),"401");
