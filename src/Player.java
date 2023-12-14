@@ -5,7 +5,7 @@ import java.awt.Rectangle;
 
 
 // 플레이어 클래스 수정
-class Player implements Serializable  { //1214
+class Player implements Serializable  { //121423
     private Color color; // 색상 필드 추가
     // 기존 코드 유지...
     private int x, y;
