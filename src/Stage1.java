@@ -1,6 +1,6 @@
 import java.awt.*;
 import java.util.ArrayList;
-
+//오픈소스 사용안한 클래스
 
 public class Stage1 {
     private ArrayList<Platform> platforms;
@@ -41,6 +41,17 @@ public class Stage1 {
             platform.draw(g);
         }
        // player.draw(g);
+    }
+
+    public void checkCollisions() {
+        for (Platform platform : platforms) {
+            if (player1.getBounds().intersects(platform.getBounds())) {
+                player1.setOnGround(true);
+                player1.setY(platform.getY() - player1.getSize());
+                return;
+            }
+        }
+        player1.setOnGround(false);
     }
 
     // 필요한 경우 추가 메소드 구현
