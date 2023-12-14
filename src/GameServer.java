@@ -108,11 +108,10 @@ public class GameServer extends JFrame {
                 try {
                     socket = new ServerSocket(Integer.parseInt(txtPortNumber.getText()));
                 } catch (NumberFormatException | IOException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-                AppendText("Chat Server Running..");
-                btnServerStart.setText("Chat Server Running..");
+                AppendText("Game Server Running..");
+                btnServerStart.setText("Game Server Running..");
                 btnServerStart.setEnabled(false); // 서버를 더이상 실행시키지 못 하게 막는다
                 txtPortNumber.setEnabled(false); // 더이상 포트번호 수정못 하게 막는다
                 AcceptServer accept_server = new AcceptServer();
@@ -131,12 +130,12 @@ public class GameServer extends JFrame {
                 try {
                     AppendText("Waiting new clients ...");
                     client_socket = socket.accept(); // accept가 일어나기 전까지는 무한 대기중
-                    AppendText("새로운 참가자 from " + client_socket);
+                    //AppendText("새로운 참가자 from " + client_socket);
                     // User 당 하나씩 Thread 생성
                     UserService new_user = new UserService(client_socket);
                     UserVec.add(new_user); // 새로운 참가자 배열에 추가
                     new_user.start(); // 만든 객체의 스레드 실행
-                    AppendText("현재 참가자 수 " + UserVec.size());
+                    AppendText("현재 참가자 수 " + UserVec.size()); //연결된 사용자를 저장할 벡터
                 } catch (IOException e) {
                     AppendText("accept() error");
                     // System.exit(0);
@@ -153,7 +152,7 @@ public class GameServer extends JFrame {
 
 
 
-    // User 당 생성되는 Thread
+    // User 당 생성되는 Thread, 유저 수만큼 스레드 생성
     // Read One 에서 대기 -> Write All
     class UserService extends Thread {
         private InputStream is;
@@ -172,11 +171,11 @@ public class GameServer extends JFrame {
         public int roomNum = 0;
 
         public UserService(Socket client_socket) {
-            // TODO Auto-generated constructor stub
             // 매개변수로 넘어온 자료 저장
             this.client_socket = client_socket;
             this.user_vc = UserVec;
             try {
+                //입출력 스트림 생성
 //				is = client_socket.getInputStream();
 //				dis = new DataInputStream(is);
 //				os = client_socket.getOutputStream();
@@ -185,6 +184,9 @@ public class GameServer extends JFrame {
                 oos = new ObjectOutputStream(client_socket.getOutputStream());
                 oos.flush();
                 ois = new ObjectInputStream(client_socket.getInputStream());
+
+                AppendText("입장!!!!!!!!!");
+                WriteOne("게임에 들어오신 것을 환엽합니다", "101");
 
             } catch (Exception e) {
                 AppendText("userService error");
@@ -200,20 +202,44 @@ public class GameServer extends JFrame {
         }
 
 
-        public void Login() {
-            AppendText("새로운 참가자 " + UserName + " 입장.");
-            //WriteOne("Welcome to Java chat server\n", "101");
-            //WriteOne(UserName + "님 환영합니다.\n", "101"); // 연결된 사용자에게 정상접속을 알림
-            String msg = "[" + UserName + "]님이 입장 하였습니다.\n";
-        }
+//        public void Login() {
+//            AppendText("새로운 참가자 " + UserName + " 입장.");
+//            //WriteOne("Welcome to Java chat server\n", "101");
+//            //WriteOne(UserName + "님 환영합니다.\n", "101"); // 연결된 사용자에게 정상접속을 알림
+//            String msg = "[" + UserName + "]님이 입장 하였습니다.\n";
+//        }
 
 
-        public void Logout() {
-            String msg = "[" + UserName + "]님이 퇴장 하였습니다.\n";
-            UserVec.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
-            WriteAll(msg, "104"); // 나를 제외한 다른 User들에게 전송
-            reduceRoomCount(getRoomNum());
-            AppendText("사용자 퇴장. 현재 참가자 수 " + UserVec.size());
+//        public void Logout() {
+//            String msg = "[" + UserName + "]님이 퇴장 하였습니다.\n";
+//            UserVec.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
+//            WriteAll(msg, "104"); // 나를 제외한 다른 User들에게 전송
+//            reduceRoomCount(getRoomNum());
+//            AppendText("사용자 퇴장. 현재 참가자 수 " + UserVec.size());
+//        }
+
+
+        //클라이언트로 (메시지) 전송
+        public void WriteOne(String msg, String code) {
+            try {
+                ChatMsg obcm = new ChatMsg("SERVER", code, msg);
+                if(obcm!=null) oos.writeObject(obcm);
+            } catch (IOException e) {
+                AppendText("dos.writeObject() error"); //오류났을때
+                try { //닫아주기
+                    ois.close();
+                    oos.close();
+                    client_socket.close();
+                    client_socket = null;
+                    ois = null;
+                    oos = null;
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                //Logout(); // 에러가난 현재 객체를 벡터에서 지운다
+                // 창 닫으면 발생
+                AppendText("사용자 퇴장. 현재 참가자 수 " + UserVec.size());
+            }
         }
 
        // 모든 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
@@ -245,26 +271,7 @@ public class GameServer extends JFrame {
                 }
             }
         }
-        public void WriteOne(String msg, String code) {
-            try {
-                ChatMsg obcm = new ChatMsg("SERVER", code, msg);
-                if(obcm!=null) oos.writeObject(obcm);
-            } catch (IOException e) {
-                AppendText("dos.writeObject() error");
-                try {
-                    ois.close();
-                    oos.close();
-                    client_socket.close();
-                    client_socket = null;
-                    ois = null;
-                    oos = null;
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-                Logout(); // 에러가난 현재 객체를 벡터에서 지운다
-            }
-        }
+
 
         public void WriteOneObject(Object ob) {
             try {
@@ -280,13 +287,13 @@ public class GameServer extends JFrame {
                     ois = null;
                     oos = null;
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-                Logout();
+                //Logout();
             }
         }
 
+        //스타트 함수 호출하는 순간 실행할 run 함수
         public void run() {
             while (true) { // 사용자 접속을 계속해서 받기 위해 while문
                 try {
@@ -318,7 +325,7 @@ public class GameServer extends JFrame {
                         if(getRoomCount(roomNum) >= 1) {
                             WriteJoin();
                         }
-                        Login();
+                        //Login();
                     } else if (cm.getCode().matches("103")) { // 게임 시작
                         WriteOthers("start","103");
                     }else if (cm.getCode().matches("300")) { // stage 이동
@@ -343,12 +350,12 @@ public class GameServer extends JFrame {
                         WriteOne(cm.getData(),"403");
                     }
                 } catch (IOException e) {
-                    AppendText("ois.readObject() error");
+                    AppendText("ois.readObject() error"); //창 닫으면 이게 뜸
                     try {
                         ois.close();
                         oos.close();
                         client_socket.close();
-                        Logout(); // 에러가난 현재 객체를 벡터에서 지운다
+                        //Logout(); // 에러가난 현재 객체를 벡터에서 지운다
                         break;
                     } catch (Exception ee) {
                         break;
