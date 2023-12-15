@@ -83,15 +83,11 @@ public class GameClient extends KeyAdapter {
         JFrame frame = new JFrame("Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
         // 플레이어 생성
         Player player1 = new Player(1, 200, 200, Color.red);
         Player player2 = new Player(2, 205, 300, Color.yellow);
 
-
         GamePanel gamePanel = new GamePanel(player1, player2);
-        frame.pack();
-        frame.setSize(330, 730);
 
         // 서버 연결 설정 (IP 주소와 포트 번호에 따라)
         gamePanel.connectToServer("127.0.0.1", 30000);
