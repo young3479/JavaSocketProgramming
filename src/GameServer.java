@@ -42,6 +42,8 @@ public class GameServer extends JFrame {
     private Vector UserVec = new Vector(); // 연결된 사용자를 저장할 벡터
     private int [] RoomCount = new int[5];
     private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
+    private boolean gameStarted = false; // 게임 시작 여부를 추적하는 플래그
+
 
     public void addRoomCount(int roomNum) {
         RoomCount[roomNum]++;
@@ -223,7 +225,7 @@ public class GameServer extends JFrame {
         public void WriteOne(String msg, String code) {
             try {
                 ChatMsg obcm = new ChatMsg("SERVER", code, msg);
-                if(obcm!=null) oos.writeObject(obcm);
+                if (obcm != null) oos.writeObject(obcm);
             } catch (IOException e) {
                 AppendText("dos.writeObject() error"); //오류났을때
                 try { //닫아주기
@@ -242,15 +244,22 @@ public class GameServer extends JFrame {
             }
         }
 
-       // 모든 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
-        public void WriteAll(String str, String code) {
+//       // 모든 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
+//        public void WriteAll(String str, String code) {
+//            for (int i = 0; i < user_vc.size(); i++) {
+//                UserService user = (UserService) user_vc.elementAt(i);
+//                if (user.UserStatus == "O" && user.getRoomNum() == roomNum)
+//                    user.WriteOne(str, code);
+//            }
+//        }
+
+        // 모든 사용자에게 메시지 전송
+        public void WriteAll(String msg, String code) {
             for (int i = 0; i < user_vc.size(); i++) {
                 UserService user = (UserService) user_vc.elementAt(i);
-                if (user.UserStatus == "O" && user.getRoomNum() == roomNum)
-                    user.WriteOne(str, code);
+                user.WriteOne(msg, code);
             }
         }
-
 
         // 나를 제외한 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
         public void WriteOthers(String str, String code) {
@@ -276,8 +285,7 @@ public class GameServer extends JFrame {
         public void WriteOneObject(Object ob) {
             try {
                 oos.writeObject(ob);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 AppendText("oos.writeObject(ob) error");
                 try {
                     ois.close();
@@ -294,75 +302,57 @@ public class GameServer extends JFrame {
         }
 
         //스타트 함수 호출하는 순간 실행할 run 함수
+        @Override
         public void run() {
-            while (true) { // 사용자 접속을 계속해서 받기 위해 while문
+            while (true) {
                 try {
+                    Object receivedObj = ois.readObject();
+                    if (receivedObj instanceof ChatMsg) {
+                        ChatMsg chatMsg = (ChatMsg) receivedObj;
 
-                    Object obcm = null;
-                    String msg = null;
-                    ChatMsg cm = null;
-                    if (socket == null)
-                        break;
-                    try {
-                        obcm = ois.readObject();
-                    } catch (ClassNotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                        return;
-                    }
-                    if (obcm == null)
-                        break;
-                    if (obcm instanceof ChatMsg) {
-                        cm = (ChatMsg) obcm;
-                    } else
-                        continue;
-                    if (cm.getCode().matches("101")) { // 방 만들기/방 참가
-                        UserName = cm.getId();
-                        UserStatus = "O"; // Online 상태
-                        //1,2,3
-                        roomNum = Integer.parseInt(cm.getData());
-                        addRoomCount(roomNum);
-                        if(getRoomCount(roomNum) >= 1) {
-                            WriteJoin();
+                        // 클라이언트로부터 받은 메시지 처리
+                        if (chatMsg.getCode().equals("101")) {
+                            // "101" 코드를 가진 메시지 - 사용자 입장 메시지
+                            UserName = chatMsg.getId();
+                            String entranceMsg = chatMsg.getData();
+                            AppendText(entranceMsg); // 서버 화면에 입장 메시지 출력
+                        } else if (chatMsg.getCode().equals("103")) { // 게임 시작
+                            WriteOthers("start", "103");
+                        } else if (chatMsg.getCode().matches("300")) { // stage 이동
+                            WriteOthers(chatMsg.getData(), "300");
+                            WriteOne(chatMsg.getData(), "300");
+                        } else if (chatMsg.getCode().matches("401")) { // player 움직임 keyPressed
+                            String actionMessage = "[" + UserName + "] pressed " + chatMsg.getData();
+                            WriteAll(actionMessage, "401");
+                            WriteOthers(chatMsg.getData(), "401");
+                            WriteOne(chatMsg.getData(), "401");
+                        } else if (chatMsg.getCode().matches("402")) { // player 움직임 keyReleased
+                            WriteOthers(chatMsg.getData(), "402");
+                            WriteOne(chatMsg.getData(), "402");
+                        } else if (chatMsg.getCode().matches("403")) { // player 움직임 (x,y)
+                            WriteOthers(chatMsg.getData(), "403");
+                            WriteOne(chatMsg.getData(), "403");
                         }
-                        //Login();
-                    } else if (cm.getCode().matches("103")) { // 게임 시작
-                        WriteOthers("start","103");
-                    }else if (cm.getCode().matches("300")) { // stage 이동
-                        WriteOthers(cm.getData(),"300");
-                        WriteOne(cm.getData(),"300");
-                    } else if (cm.getCode().matches("401")) { // player 움직임 keyPressed
-                        String actionMessage = "[" + UserName + "] pressed " + cm.getData();
-                        WriteAll(actionMessage, "401");
-                        System.out.println("401");
 
-                        WriteOthers(cm.getData(),"401");
-                        WriteOne(cm.getData(),"401");
-                    } else if (cm.getCode().matches("402")) { // player 움직임 keyReleased
-                        System.out.println("402");
-
-                        WriteOthers(cm.getData(),"402");
-                        WriteOne(cm.getData(),"402");
-                    } else if (cm.getCode().matches("403")) { // player 움직임 (x,y)
-                        System.out.println("403");
-
-                        WriteOthers(cm.getData(),"403");
-                        WriteOne(cm.getData(),"403");
+                        // 두 명의 플레이어가 모두 연결되었고, 게임이 아직 시작되지 않았을 때
+                        if (UserVec.size() == 2 && !gameStarted) {
+                            WriteAll("GAME_START", "GAME_START");
+                            gameStarted = true; // 게임 시작 플래그 설정
+                        }
                     }
-                } catch (IOException e) {
-                    AppendText("ois.readObject() error"); //창 닫으면 이게 뜸
+                } catch (IOException | ClassNotFoundException e) {
+                    AppendText("Connection error with client: " + e.getMessage());
                     try {
                         ois.close();
                         oos.close();
                         client_socket.close();
-                        //Logout(); // 에러가난 현재 객체를 벡터에서 지운다
                         break;
-                    } catch (Exception ee) {
+                    } catch (IOException ee) {
+                        AppendText("Error closing connection: " + ee.getMessage());
                         break;
                     }
                 }
             }
         }
     }
-
 }

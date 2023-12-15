@@ -17,7 +17,9 @@ public class GameClient extends KeyAdapter {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI();
+                // GameWaitingPanel 시작
+                GameWaitingPanel waitingPanel = new GameWaitingPanel();
+                waitingPanel.setVisible(true);
             }
         });
     }
@@ -88,16 +90,14 @@ public class GameClient extends KeyAdapter {
 
 
         GamePanel gamePanel = new GamePanel(player1, player2);
-        frame.getContentPane().add(gamePanel);
-        //타이틀 바 제외하고 730 X 730을 생성
-        gamePanel.setPreferredSize(new Dimension(730, 730));
+        frame.pack();
+        frame.setSize(330, 730);
 
         // 서버 연결 설정 (IP 주소와 포트 번호에 따라)
         gamePanel.connectToServer("127.0.0.1", 30000);
         // 게임 루프 시작
         new Thread(() -> gamePanel.gameLoop()).start();
 
-        frame.pack();
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
