@@ -13,6 +13,11 @@ import javax.swing.*;
 
 public class GamePanel extends JLayeredPane {
 
+    private boolean leftPressed = false;
+    private boolean rightPressed = false;
+    private boolean upPressed = false;
+    private boolean downPressed = false;
+
 
     private ArrayList<Platform> platforms;
     private Player player1;
@@ -26,10 +31,11 @@ public class GamePanel extends JLayeredPane {
 
     private Map map;
 
-    private int score = 0;
     private GameThread gameThread;
 
-    Image heartImg = new ImageIcon("src/image/heart.png").getImage();
+    // 플레이어 움직임 속도 설정
+    private final int MOVE_SPEED = 5;
+
     public boolean threadFlag = true;
     private ObjectOutputStream oos;
 
@@ -38,9 +44,17 @@ public class GamePanel extends JLayeredPane {
     /**
      * Create the panel.
      */
-    public GamePanel(Player player1, Player player2) {
+    public GamePanel(Player player1, Player player2, int myPlayerNum) {
         this.player1 = player1;
         this.player2 = player2;
+        this.myPlayerNum = myPlayerNum;
+
+        // 플레이어 객체 할당
+        if (myPlayerNum == 1)
+            myself = player1;
+        else
+            myself = player2;
+
 
         // 배경 색 설정
         setOpaque(true);
@@ -52,13 +66,9 @@ public class GamePanel extends JLayeredPane {
         //add(player1, new Integer(10));
         //add(player2, new Integer(10));
 
-
-
         // 맵 그리기
         // map = new Map("src/resource/map1.txt");
         // blocks = map.getBlocks();
-
-
 
         this.addKeyListener(new KeyListener());
         this.requestFocus();
@@ -68,11 +78,6 @@ public class GamePanel extends JLayeredPane {
 
         this.gameThread = new GameThread();
         gameThread.start();
-
-
-
-//		this.sendThread = new SendThread();
-//		sendThread.start();
     }
 
     @Override
@@ -129,15 +134,10 @@ public class GamePanel extends JLayeredPane {
 
 
 
-
-
     public String getUserName() {
         return userName;
     }
 
-    public void meetBubbleMonster(int bubbleNum, int monsterNum, int x, int y) {
-
-    }
 
 
     class GameThread extends Thread {
@@ -168,72 +168,9 @@ public class GamePanel extends JLayeredPane {
         else
             other = player2;
 
-
     }
 
-//    public void movePlayerTrue(String[] playerInfo) {
-//        String KeyCode = playerInfo[1];
-//        System.out.println("GamePanel ###### " + playerInfo[1]);
-//
-//        Player other;
-//        if (playerInfo[0].equals("1"))
-//            other = player1;
-//        else
-//            other = player2;
-//
-//        switch (KeyCode) {
-//            case "VK_DOWN":
-//                other.setMoveDown(true);
-//                break;
-//            case "VK_UP":
-//                if (other.getAbleToJump()) {
-//                    other.setMoveUp(true);
-//                    other.setJumping(true);
-//                }
-//                break;
-//            case "VK_LEFT":
-//                other.setMoveLeft(true);
-//                break;
-//            case "VK_RIGHT":
-//                other.setMoveRight(true);
-//                break;
-//            case "VK_SPACE":
-//                other.setShoot(true);
-//                break;
-//            case "VK_ESCAPE":
-//                System.exit(0);
-//                break;
-//        }
-//    }
-//
-//    public void movePlayerFalse(String[] playerInfo) {
-//        String KeyCode = playerInfo[1];
-//        //System.out.println("GamePanel ###### " + playerInfo[0] + ":" + playerInfo[1]);
-//        Player other;
-//        if (Integer.parseInt(playerInfo[0]) == 1)
-//            other = player1;
-//        else
-//            other = player2;
-//
-//        switch (KeyCode) {
-//            case "VK_DOWN":
-//                other.setMoveDown(false);
-//                break;
-//            case "VK_UP":
-//                other.setMoveUp(false);
-//                break;
-//            case "VK_LEFT":
-//                other.setMoveLeft(false);
-//                break;
-//            case "VK_RIGHT":
-//                other.setMoveRight(false);
-//                break;
-//            case "VK_SPACE":
-//                other.setShoot(false);
-//
-//                break;
-//        }
-//    }
+
     // 서버와의 연결을 설정하는 메소드
     public void connectToServer(String ip, int port) {
         try {
@@ -256,49 +193,110 @@ public class GamePanel extends JLayeredPane {
         }
     }
 
+    // 플레이어 위치 업데이트 메서드
+    private void updatePlayerPosition(Player player, boolean left, boolean right, boolean up, boolean down) {
+        if (left) {
+            player.setX(player.getX() - MOVE_SPEED);
+        }
+        if (right) {
+            player.setX(player.getX() + MOVE_SPEED);
+        }
+        if (up) {
+            player.setY(player.getY() - MOVE_SPEED);
+        }
+        if (down) {
+            player.setY(player.getY() + MOVE_SPEED);
+        }
+    }
+    // 서버에 플레이어 움직임을 전송하는 메소드
+    public void sendPlayerMovement(String action) {
+        try {
+            // 플레이어의 현재 위치에 대한 메시지 생성
+            ChatMsg message = new ChatMsg(userName, "player_move", action);
+            oos.writeObject(message);
+        } catch (IOException e) {
+            System.err.println("Error sending player movement: " + e.getMessage());
+        }
+    }
     class KeyListener extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
+            // 현재 플레이어 객체를 결정합니다.
+            Player currentPlayer = myPlayerNum == 1 ? player1 : player2;
+
+            // 현재 플레이어의 키 이벤트를 처리합니다.
             switch (e.getKeyCode()) {
-                case KeyEvent.VK_DOWN:
-                    sendKeyAction("401@@VK_DOWN");
-                    break;
-                case KeyEvent.VK_UP:
-                    sendKeyAction("401@@VK_UP");
-                    break;
                 case KeyEvent.VK_LEFT:
-                    sendKeyAction("401@@VK_LEFT");
+                    leftPressed = true;
                     break;
                 case KeyEvent.VK_RIGHT:
-                    sendKeyAction("401@@VK_RIGHT");
+                    rightPressed = true;
                     break;
-                case KeyEvent.VK_SPACE:
-                    sendKeyAction("401@@VK_SPACE");
+                case KeyEvent.VK_UP:
+                    upPressed = true;
                     break;
-                // 추가적인 키 이벤트 처리
+                case KeyEvent.VK_DOWN:
+                    downPressed = true;
+                    break;
             }
+            updatePlayerPosition(currentPlayer, leftPressed, rightPressed, upPressed, downPressed);
+            sendPlayerMovement("keyPressed:" + e.getKeyCode());
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
+            // 현재 플레이어 객체를 결정합니다.
+            Player currentPlayer = myPlayerNum == 1 ? player1 : player2;
+
+            // 현재 플레이어의 키 이벤트를 처리합니다.
             switch (e.getKeyCode()) {
-                case KeyEvent.VK_DOWN:
-                    sendKeyAction("402@@VK_DOWN");
-                    break;
-                case KeyEvent.VK_UP:
-                    sendKeyAction("402@@VK_UP");
-                    break;
                 case KeyEvent.VK_LEFT:
-                    sendKeyAction("402@@VK_LEFT");
+                    leftPressed = false;
                     break;
                 case KeyEvent.VK_RIGHT:
-                    sendKeyAction("402@@VK_RIGHT");
+                    rightPressed = false;
                     break;
-                case KeyEvent.VK_SPACE:
-                    sendKeyAction("402@@VK_SPACE");
+                case KeyEvent.VK_UP:
+                    upPressed = false;
                     break;
-                // 추가적인 키 이벤트 처리
+                case KeyEvent.VK_DOWN:
+                    downPressed = false;
+                    break;
             }
+            updatePlayerPosition(currentPlayer, leftPressed, rightPressed, upPressed, downPressed);
+            sendPlayerMovement("keyReleased:" + e.getKeyCode());
+        }
+    }
+
+    public void updatePlayerFromServer(String playerInfo) {
+        String[] parts = playerInfo.split("@@");
+        int playerNum = Integer.parseInt(parts[0]);
+        String action = parts[1];
+
+        Player playerToUpdate = playerNum == 1 ? player1 : player2;
+
+        switch (action) {
+            case "VK_LEFT_PRESSED":
+                playerToUpdate.setX(playerToUpdate.getX() - MOVE_SPEED);
+                break;
+            case "VK_RIGHT_PRESSED":
+                playerToUpdate.setX(playerToUpdate.getX() + MOVE_SPEED);
+                break;
+            case "VK_UP_PRESSED":
+                playerToUpdate.setY(playerToUpdate.getY() - MOVE_SPEED);
+                break;
+            case "VK_DOWN_PRESSED":
+                playerToUpdate.setY(playerToUpdate.getY() + MOVE_SPEED);
+                break;
+            case "VK_LEFT_RELEASED":
+            case "VK_RIGHT_RELEASED":
+                // 가로 이동 중지
+                break;
+            case "VK_UP_RELEASED":
+            case "VK_DOWN_RELEASED":
+                // 세로 이동 중지
+                break;
+            // 추가적인 키 이벤트 처리
         }
     }
 

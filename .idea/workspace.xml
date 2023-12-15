@@ -5,14 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2a960ee4-1a93-4a73-ac35-196c54592bb1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/ChatMsg.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/ChatMsg.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/GameClient$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/GameClient$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/project/GameClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/GameClient.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/project/GamePanel$GameThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/GamePanel$GameThread.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/project/GamePanel$KeyListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/GamePanel$KeyListener.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/project/GamePanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/GamePanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/GameServer$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/GameServer$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/GameServer$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/GameServer$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/GameServer$AcceptServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/GameServer$AcceptServer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/GameServer$UserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/GameServer$UserService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/GameServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/GameServer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/NetworkHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/NetworkHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/Platform.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/Platform.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/Player.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/project/Stage1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/project/Stage1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GamePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GamePanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameWaitingPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameWaitingPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Player.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

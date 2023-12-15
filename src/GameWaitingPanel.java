@@ -23,6 +23,8 @@ public class GameWaitingPanel extends JFrame {
     private JTextField txtUserName;
     private JTextField txtIpAddress;
     private JTextField txtPortNumber;
+
+    private int myPlayerNum; // 플레이어 번호를 저장할 변수
     private ObjectInputStream in; // 서버로부터 메시지를 받기 위한 스트림
 
     private ObjectOutputStream out;
@@ -117,7 +119,12 @@ public class GameWaitingPanel extends JFrame {
                             Object receivedObj = in.readObject();
                             if (receivedObj instanceof ChatMsg) {
                                 ChatMsg chatMsg = (ChatMsg) receivedObj;
-                                if (chatMsg.getCode().equals("GAME_START")) {
+                                if (chatMsg.getCode().equals("PLAYER_NUMBER")) {
+                                    // 서버로부터 플레이어 번호 받기
+                                    String playerNumStr = chatMsg.getData().split(":")[1];
+                                    int playerNum = Integer.parseInt(playerNumStr.trim());
+                                    myPlayerNum = playerNum; // 플레이어 번호 저장
+                                } else if (chatMsg.getCode().equals("GAME_START")) {
                                     // 서버로부터 게임 시작 메시지를 받으면
                                     EventQueue.invokeLater(() -> startGame());
                                 }
@@ -128,17 +135,17 @@ public class GameWaitingPanel extends JFrame {
                         }
                     }
                 }).start();
+
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
 
         private void startGame() {
-            // GamePanel 시작
             Player player1 = new Player(1, 100, 100, Color.RED);
             Player player2 = new Player(2, 200, 100, Color.BLUE);
 
-            GamePanel gamePanel = new GamePanel(player1, player2);
+            GamePanel gamePanel = new GamePanel(player1, player2, myPlayerNum);
             setContentPane(gamePanel);
             pack();
             gamePanel.requestFocusInWindow();

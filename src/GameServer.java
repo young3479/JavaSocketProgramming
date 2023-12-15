@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
@@ -126,6 +125,7 @@ public class GameServer extends JFrame {
 
     // 새로운 참가자 accept() 하고 user thread를 새로 생성한다.
     class AcceptServer extends Thread {
+        private int playerCount = 0;
         @SuppressWarnings("unchecked")
         public void run() {
             while (true) { // 사용자 접속을 계속해서 받기 위해 while문
@@ -134,7 +134,8 @@ public class GameServer extends JFrame {
                     client_socket = socket.accept(); // accept가 일어나기 전까지는 무한 대기중
                     //AppendText("새로운 참가자 from " + client_socket);
                     // User 당 하나씩 Thread 생성
-                    UserService new_user = new UserService(client_socket);
+                    playerCount++;
+                    UserService new_user = new UserService(client_socket, playerCount);
                     UserVec.add(new_user); // 새로운 참가자 배열에 추가
                     new_user.start(); // 만든 객체의 스레드 실행
                     AppendText("현재 참가자 수 " + UserVec.size()); //연결된 사용자를 저장할 벡터
@@ -170,11 +171,16 @@ public class GameServer extends JFrame {
         public String UserName = "";
         public String UserStatus;
 
+        // 플레이어 번호
+        private int playerNumber;
+
+
         public int roomNum = 0;
 
-        public UserService(Socket client_socket) {
+        public UserService(Socket client_socket, int playerNumber) {
             // 매개변수로 넘어온 자료 저장
             this.client_socket = client_socket;
+            this.playerNumber = playerNumber; // 플레이어 번호 할당
             this.user_vc = UserVec;
             try {
                 //입출력 스트림 생성
@@ -193,6 +199,11 @@ public class GameServer extends JFrame {
             } catch (Exception e) {
                 AppendText("userService error");
             }
+        }
+
+        // 클라이언트에게 플레이어 번호 전송
+        public void sendPlayerNumber() {
+            WriteOne("PlayerNumber:" + playerNumber, "PLAYER_NUMBER");
         }
 
         public int getRoomNum() {
@@ -262,11 +273,12 @@ public class GameServer extends JFrame {
         }
 
         // 나를 제외한 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
-        public void WriteOthers(String str, String code) {
+        public void WriteOthers(String msg, String code) {
             for (int i = 0; i < user_vc.size(); i++) {
                 UserService user = (UserService) user_vc.elementAt(i);
-                if (user != this && user.getRoomNum() == roomNum)
-                    user.WriteOne(str, code);
+                if (user != this) {
+                    user.WriteOne(msg, code);
+                }
             }
         }
 
@@ -306,32 +318,42 @@ public class GameServer extends JFrame {
         public void run() {
             while (true) {
                 try {
+                    // 클라이언트에게 플레이어 번호 전송
+                    sendPlayerNumber();
+
                     Object receivedObj = ois.readObject();
                     if (receivedObj instanceof ChatMsg) {
                         ChatMsg chatMsg = (ChatMsg) receivedObj;
 
                         // 클라이언트로부터 받은 메시지 처리
-                        if (chatMsg.getCode().equals("101")) {
-                            // "101" 코드를 가진 메시지 - 사용자 입장 메시지
-                            UserName = chatMsg.getId();
-                            String entranceMsg = chatMsg.getData();
-                            AppendText(entranceMsg); // 서버 화면에 입장 메시지 출력
-                        } else if (chatMsg.getCode().equals("103")) { // 게임 시작
-                            WriteOthers("start", "103");
-                        } else if (chatMsg.getCode().matches("300")) { // stage 이동
-                            WriteOthers(chatMsg.getData(), "300");
-                            WriteOne(chatMsg.getData(), "300");
-                        } else if (chatMsg.getCode().matches("401")) { // player 움직임 keyPressed
-                            String actionMessage = "[" + UserName + "] pressed " + chatMsg.getData();
-                            WriteAll(actionMessage, "401");
-                            WriteOthers(chatMsg.getData(), "401");
-                            WriteOne(chatMsg.getData(), "401");
-                        } else if (chatMsg.getCode().matches("402")) { // player 움직임 keyReleased
-                            WriteOthers(chatMsg.getData(), "402");
-                            WriteOne(chatMsg.getData(), "402");
-                        } else if (chatMsg.getCode().matches("403")) { // player 움직임 (x,y)
-                            WriteOthers(chatMsg.getData(), "403");
-                            WriteOne(chatMsg.getData(), "403");
+                        switch (chatMsg.getCode()) {
+                            case "101": // 사용자 입장 메시지
+                                UserName = chatMsg.getId();
+                                String entranceMsg = chatMsg.getData();
+                                AppendText(entranceMsg); // 서버 화면에 입장 메시지 출력
+                                break;
+
+                            case "103": // 게임 시작
+                                WriteOthers("start", "103");
+                                break;
+
+                            case "300": // stage 이동
+                                WriteOthers(chatMsg.getData(), "300");
+                                WriteOne(chatMsg.getData(), "300");
+                                break;
+
+                            case "401": // player 움직임 keyPressed
+                                String actionMessage = "[" + UserName + "] pressed " + chatMsg.getData();
+                                WriteAll(actionMessage, "401");
+                                break;
+
+                            case "402": // player 움직임 keyReleased
+                                WriteOthers(chatMsg.getData(), "402");
+                                break;
+
+                            case "403": // player 움직임 (x,y)
+                                WriteOthers(chatMsg.getData(), "403");
+                                break;
                         }
 
                         // 두 명의 플레이어가 모두 연결되었고, 게임이 아직 시작되지 않았을 때
@@ -353,6 +375,6 @@ public class GameServer extends JFrame {
                     }
                 }
             }
-        }
+        } //run
     }
 }
