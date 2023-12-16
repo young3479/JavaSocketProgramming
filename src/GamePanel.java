@@ -91,7 +91,6 @@ public class GamePanel extends JLayeredPane {
     }
 
 
-
     public String getUserName() {
         return userName;
     }
@@ -104,8 +103,15 @@ public class GamePanel extends JLayeredPane {
         public void run() {
             while (true) {
                 try {
+
+                    // 플레이어의 위치와 상태를 업데이트
+                    player1.update();
+                    player2.update();
+                    // 충돌 처리
+                    stage1.checkCollisions(); //수정 성공 (중력 구현)
+//여기 함수 어떻게 순서 정할지도 중요한듯
                     repaint();
-                    Thread.sleep(20);
+                    Thread.sleep(20); //수정 초기값 20
                 } catch (InterruptedException e) {
                     return;
                 }
@@ -131,24 +137,49 @@ public class GamePanel extends JLayeredPane {
 
     // 플레이어 위치 업데이트 메서드
     private void updatePlayerPosition(Player player, boolean left, boolean right, boolean up, boolean down) {
+
         if (oos == null) {
             return; // ObjectOutputStream이 초기화되지 않았다면 함수 종료
         }
+
+
+// 중력 적용
+        if (!player.isOnGround()) {
+            player.setVelocityY(player.getVelocityY() + Player.GRAVITY);
+        } else {
+            player.setVelocityY(0);
+        }
+
+        // 수평 이동
         if (left) {
-            player.setX(player.getX() - MOVE_SPEED);
+            player.setVelocityX(-MOVE_SPEED);
+        } else if (right) {
+            player.setVelocityX(MOVE_SPEED);
+        } else {
+            player.setVelocityX(0); // 왼쪽이나 오른쪽이 눌리지 않으면 수평 속도를 0으로 설정
         }
-        if (right) {
-            player.setX(player.getX() + MOVE_SPEED);
+
+        // 점프
+        if (up && player.isOnGround()) {
+            player.jump();
         }
-        if (up) {
-            player.setY(player.getY() - MOVE_SPEED);
-        }
-        if (down) {
-            player.setY(player.getY() + MOVE_SPEED);
-        }
+
+
+        player.update(); // 플레이어의 위치 업데이트
+
+
+        // 충돌 처리
+        stage1.checkCollisions();
+
+
+
         // 위치가 변경되면 서버에 전송
         sendPlayerPosition(player);
     }
+
+
+
+
     // 서버에 플레이어 움직임을 전송하는 메소드
     public void sendPlayerMovement(String action) {
         try {
@@ -162,6 +193,7 @@ public class GamePanel extends JLayeredPane {
         @Override
         public void keyPressed(KeyEvent e) {
             Player currentPlayer = myPlayerNum == 1 ? player1 : player2;
+            // 상대 플레이어 결정
             boolean movementUpdated = false;
 
             switch (e.getKeyCode()) {
@@ -239,9 +271,19 @@ public class GamePanel extends JLayeredPane {
         int y = Integer.parseInt(position[1]);
 
         Player playerToUpdate = playerNum == 1 ? player1 : player2;
+
         playerToUpdate.setX(x);
         playerToUpdate.setY(y);
+
+// 중력 적용 및 위치 업데이트
+        playerToUpdate.update(); //수정성공 (중력 기능구현)
+
+        // 화면을 다시 그려 변경 사항 반영
+        repaint();
     }
+
+
+
 
     //서버로부터 메시지 수신
     class ServerMessageListener extends Thread {
@@ -291,11 +333,47 @@ public class GamePanel extends JLayeredPane {
             // 현재 플레이어와 다른 플레이어의 움직임을 업데이트
             if (playerNumber != myPlayerNum) {
                 Player otherPlayer = playerNumber == 1 ? player1 : player2;
-                otherPlayer.setX(x);
-                otherPlayer.setY(y);
+               // stage1.checkCollisions(); //수정
+                //otherPlayer.setX(x); //(기능 구현 중) -이전 코드
+                //otherPlayer.setY(y);//(기능 구현 중) -이전 코드
+
+                // 인터폴레이션을 사용하여 점진적으로 목표 위치로 이동
+                interpolatePlayerPosition(otherPlayer, x, y); //(기능 구현 중)
                 repaint(); // 화면을 다시 그려서 변경 사항 반영
             }
         }
+        // 플레이어 위치를 점진적으로 목표 위치로 이동시키는 메서드
+        private void interpolatePlayerPosition(Player player, int targetX, int targetY) {
+            // 이동 속도나 인터폴레이션 비율을 설정
+            final float interpolationRate = 0.1f;
+            int newX = (int)(player.getX() + (targetX - player.getX()) * interpolationRate);
+            int newY = (int)(player.getY() + (targetY - player.getY()) * interpolationRate);
+
+            player.setX(newX);
+            player.setY(newY);
+        }
+
+        // 서버로부터 받은 위치 데이터를 사용하여 플레이어 위치 업데이트
+        private void updatePlayerPositionFromServer(Player player, int newX, int newY) {
+            // 서버로부터 받은 위치로 플레이어 위치 설정
+            player.setX(newX);
+            player.setY(newY);
+
+            // 중력 적용
+            if (!player.isOnGround()) {
+                player.setVelocityY(player.getVelocityY() + Player.GRAVITY);
+            } else {
+                player.setVelocityY(0);
+            }
+
+            player.update(); // 플레이어의 위치 업데이트
+
+            // 충돌 처리
+            stage1.checkCollisions();
+        }
+
+
+
 
     }
 

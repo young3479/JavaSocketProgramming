@@ -10,11 +10,12 @@ import java.util.Objects;
 class Player implements Serializable {
     private ImageIcon imageIcon;
     private int playerNum;
+    public static final int GRAVITY = 1;
     private Color color; // 플레이어 색상
     private int x, y; // 플레이어 위치
     private final int SIZE = 30; // 플레이어 크기
     private int velocityX, velocityY; // 플레이어 속도
-    private final int GRAVITY = 1; // 중력
+    //private final int GRAVITY = 1; // 중력
     private boolean onGround; // 땅에 닿았는지 여부
     private static final int JUMP_VELOCITY = -20; // 점프 초기 속도
 
@@ -52,19 +53,15 @@ class Player implements Serializable {
         return onGround;
     }
 
+    // Player 클래스 내부의 update 메서드는 플레이어의 움직임을 계산합니다.
     public void update() {
         x += velocityX;
-        velocityY += GRAVITY; // 항상 중력 적용
-        y += velocityY;
-
-        // 땅에 닿았는지 확인 (충돌 처리 필요)
-        // 예를 들어, 바닥이 y=300이라고 가정했을 때의 간단한 예시
-        // 실제로는 블록과의 충돌 처리가 필요합니다.
-        if (y >= 300) {
-            y = 300;
-            onGround = true;
+        if (!onGround) {
+            velocityY += GRAVITY;
+        } else {
             velocityY = 0;
         }
+        y += velocityY;
     }
 
     public void draw(Graphics g) {
@@ -102,6 +99,10 @@ class Player implements Serializable {
 
     public int getSize() {
         return SIZE;
+    }
+
+    public int getVelocityY() {
+        return velocityY;
     }
 
     public void setOnGround(boolean onGround) {

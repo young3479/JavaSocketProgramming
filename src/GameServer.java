@@ -297,6 +297,14 @@ public class GameServer extends JFrame {
                                 break;
                         }
 
+//                        // 상대 플레이어의 위치 업데이트
+//                        if (playerNumber != myPlayerNum) {
+//                            Player opponentPlayer = playerNumber == 1 ? player1 : player2;
+//                            opponentPlayer.setX(x);
+//                            opponentPlayer.setY(y);
+//                            repaint(); // 화면을 다시 그려서 변경 사항 반영
+//                        }
+
                         // 두 명의 플레이어가 모두 연결되었고, 게임이 아직 시작되지 않았을 때
                         if (UserVec.size() == 2 && !gameStarted) {
                             WriteAll("GAME_START", "GAME_START");
