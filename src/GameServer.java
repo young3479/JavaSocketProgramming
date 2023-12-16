@@ -295,6 +295,12 @@ public class GameServer extends JFrame {
                                 String movementData = chatMsg.getData();
                                 WriteOthers(movementData, "player_move");
                                 break;
+
+                            case "game_result": // 게임 결과 메시지 처리
+                                // 모든 클라이언트에게 승자 정보를 전송
+                                String winnerMessage = chatMsg.getData();
+                                WriteAll(winnerMessage, "game_result");
+                                break;
                         }
 
 //                        // 상대 플레이어의 위치 업데이트

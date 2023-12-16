@@ -9,6 +9,7 @@ public class Stage1 {
     int panelWidth = 730;
     int panelHeight = 730;
     int borderThickness = 40;
+    private Platform finishLine;
 
     public Stage1(Player player1, Player player2) {
         this.player1 = player1;
@@ -33,9 +34,28 @@ public class Stage1 {
         platforms.add(new Platform(400, 300, 100, 20, "Image/block/block2.png"));
         platforms.add(new Platform(590, 200, 100, 20, "Image/block/block2.png"));
         platforms.add(new Platform(40, 200, 100, 20, "Image/block/block2.png"));
+
+
+
+        // 도착 지점 생성, 예를 들어 x 좌표가 590인 지점에 도착 지점 설정
+        finishLine = new Platform(400, 432, 50, 70,"Image/Item/door2.png");
+        platforms.add(finishLine);
+
+        platforms.add(new Platform(590, 115, 100, 100, "Image/Item/door.png"));
+
+
     }
 
 
+    // 도착 지점에 도달했는지 확인하는 메서드
+    public Player checkWinner() {
+        if (player1.getBounds().intersects(finishLine.getBounds())) {
+            return player1;
+        } else if (player2.getBounds().intersects(finishLine.getBounds())) {
+            return player2;
+        }
+        return null; // 아무도 도착하지 않음
+    }
     public void draw(Graphics g) {
         // 여기에 플랫폼과 플레이어를 그리는 코드를 추가
         for (Platform platform : platforms) {

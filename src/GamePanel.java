@@ -112,11 +112,39 @@ public class GamePanel extends JLayeredPane {
 //여기 함수 어떻게 순서 정할지도 중요한듯
                     repaint();
                     Thread.sleep(20); //수정 초기값 20
+
+                    // 승자가 있는지 확인
+                    Player winner = stage1.checkWinner();
+                    if (winner != null) {
+                        // 승자가 결정되면 GameEndingPanel로 전환
+                        EventQueue.invokeLater(() -> switchToEndingPanel(winner.getPlayerNum()));
+                        break;
+                    }
+
                 } catch (InterruptedException e) {
                     return;
                 }
             }
         }
+    }
+
+    // 승자가 결정되었을 때 서버에 결과를 전송
+    private void sendGameResult(int winnerPlayerNum) {
+        try {
+            ChatMsg message = new ChatMsg(userName, "game_result", "Winner is Player " + winnerPlayerNum);
+            oos.writeObject(message);
+        } catch (IOException e) {
+            System.err.println("Error sending game result: " + e.getMessage());
+        }
+    }
+
+    // 승자가 결정되었을 때 호출되는 메서드
+    private void switchToEndingPanel(int winnerPlayerNum) {
+        GameEndingPanel endingPanel = new GameEndingPanel(winnerPlayerNum);
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        frame.setContentPane(endingPanel);
+        frame.revalidate();
+        frame.repaint();
     }
 
 
@@ -309,6 +337,11 @@ public class GamePanel extends JLayeredPane {
                             case "player_move":
                                 // 다른 플레이어의 움직임 처리
                                 processPlayerMove(msg.getData());
+                                break;
+                            case "game_result":
+                                String[] resultData = msg.getData().split(" ");
+                                int winnerPlayerNum = Integer.parseInt(resultData[resultData.length - 1]);
+                                EventQueue.invokeLater(() -> switchToEndingPanel(winnerPlayerNum));
                                 break;
                         }
                     }

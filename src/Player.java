@@ -109,6 +109,9 @@ class Player implements Serializable {
         this.onGround = onGround;
     }
 
+    // 플레이어 번호를 반환하는 메서드
+    public int getPlayerNum() { return playerNum; }
+
     // 네트워크 업데이트 메서드
     public void networkUpdate(NetworkHandler networkHandler) {
         // 네트워크를 통해 플레이어 상태 전송
@@ -118,4 +121,6 @@ class Player implements Serializable {
             e.printStackTrace();
         }
     }
+
+
 }
