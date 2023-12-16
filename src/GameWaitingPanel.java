@@ -142,8 +142,8 @@ public class GameWaitingPanel extends JFrame {
         }
 
         private void startGame() {
-            Player player1 = new Player(1, 100, 100, Color.RED);
-            Player player2 = new Player(2, 200, 100, Color.BLUE);
+            Player player1 = new Player(1, 100, 100, "/Image/player/ember1.png");
+            Player player2 = new Player(2, 200, 100, "/Image/player/wade1.png");
 
             String ip = txtIpAddress.getText().trim();
             int port = Integer.parseInt(txtPortNumber.getText().trim());

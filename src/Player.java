@@ -1,10 +1,15 @@
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.awt.Rectangle;
+import java.net.URL;
+import java.util.Objects;
 
 // Player 클래스
 class Player implements Serializable {
+    private ImageIcon imageIcon;
+    private int playerNum;
     private Color color; // 플레이어 색상
     private int x, y; // 플레이어 위치
     private final int SIZE = 30; // 플레이어 크기
@@ -13,10 +18,26 @@ class Player implements Serializable {
     private boolean onGround; // 땅에 닿았는지 여부
     private static final int JUMP_VELOCITY = -20; // 점프 초기 속도
 
-    public Player(int playerNumber, int startX, int startY, Color color) {
-        this.color = color;
-        this.x = startX;
-        this.y = startY;
+    public Player(int playerNum, int x, int y, String imagePath) {
+        this.playerNum = playerNum;
+        this.x = x;
+        this.y = y;
+        // 이미지 경로에서 ImageIcon 생성
+        URL imgUrl = getClass().getResource(imagePath);
+        if (imgUrl != null) {
+            ImageIcon originalIcon = new ImageIcon(imgUrl);
+            Image originalImage = originalIcon.getImage();
+
+            // 이미지 크기 설정
+            int newWidth = 37; // 이미지의 가로 크기
+            int newHeight = (originalIcon.getIconHeight() * newWidth) / originalIcon.getIconWidth(); // 세로 크기를 비율에 맞게 계산
+
+            // 크기가 조정된 이미지로 ImageIcon 생성
+            Image scaledImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            this.imageIcon = new ImageIcon(scaledImage);
+        } else {
+            throw new RuntimeException("Resource not found: " + imagePath);
+        }
         this.onGround = false;
     }
 
@@ -47,8 +68,8 @@ class Player implements Serializable {
     }
 
     public void draw(Graphics g) {
-        g.setColor(this.color);
-        g.fillOval(x, y, SIZE, SIZE);
+        Image image = imageIcon.getImage(); // ImageIcon으로부터 Image 객체 획득
+        g.drawImage(image, x, y, null); // 이미지 그리기
     }
 
     public Rectangle getBounds() {
