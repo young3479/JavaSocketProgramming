@@ -44,16 +44,33 @@ public class Stage1 {
        // player.draw(g);
     }
 
+//    public void checkCollisions() {
+//        for (Platform platform : platforms) {
+//            if (player1.getBounds().intersects(platform.getBounds())) {
+//                player1.setOnGround(true);
+//                player1.setY(platform.getY() - player1.getSize());
+//                return;
+//            }
+//        }
+//        player1.setOnGround(false);
+//    }
+
     public void checkCollisions() {
+        checkCollisionForPlayer(player1);
+        checkCollisionForPlayer(player2);
+    }
+
+    private void checkCollisionForPlayer(Player player) {
         for (Platform platform : platforms) {
-            if (player1.getBounds().intersects(platform.getBounds())) {
-                player1.setOnGround(true);
-                player1.setY(platform.getY() - player1.getSize());
+            if (player.getBounds().intersects(platform.getBounds())) {
+                player.setOnGround(true);
+                player.setY(platform.getY() - player.getSize());
                 return;
             }
         }
-        player1.setOnGround(false);
+        player.setOnGround(false);
     }
+
 
     // 필요한 경우 추가 메소드 구현
 }
