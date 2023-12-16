@@ -332,11 +332,19 @@ public class GamePanel extends JLayeredPane {
                         switch (msg.getCode()) {
                             case "update_position":
                                 // 다른 플레이어의 위치 업데이트
-                                updatePlayerFromServer(msg.getData());
+                             //   updatePlayerFromServer(msg.getData()); 수정진행중(통신최적화)
+                                // 다른 플레이어의 위치 업데이트 수정진행중(통신최적화)
+                                SwingUtilities.invokeLater(() -> {
+                                    updatePlayerFromServer(msg.getData());
+                                });
                                 break;
                             case "player_move":
                                 // 다른 플레이어의 움직임 처리
-                                processPlayerMove(msg.getData());
+                                //processPlayerMove(msg.getData());
+                                // 다른 플레이어의 움직임 처리
+                                SwingUtilities.invokeLater(() -> {
+                                    processPlayerMove(msg.getData());
+                                });
                                 break;
                             case "game_result":
                                 String[] resultData = msg.getData().split(" ");
