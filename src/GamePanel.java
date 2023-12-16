@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -41,10 +42,13 @@ public class GamePanel extends JLayeredPane {
 
     private Stage1 stage1; //맵추가
 
+    private ObjectInputStream ois;
+
+
     /**
      * Create the panel.
      */
-    public GamePanel(Player player1, Player player2, int myPlayerNum) {
+    public GamePanel(Player player1, Player player2, int myPlayerNum, String ip, int port) {
         this.player1 = player1;
         this.player2 = player2;
         this.myPlayerNum = myPlayerNum;
@@ -58,17 +62,10 @@ public class GamePanel extends JLayeredPane {
 
         // 배경 색 설정
         setOpaque(true);
+
         this.setBackground(Color.WHITE);
 
-
-       this.stage1 = new Stage1(player1, player2);
-
-        //add(player1, new Integer(10));
-        //add(player2, new Integer(10));
-
-        // 맵 그리기
-        // map = new Map("src/resource/map1.txt");
-        // blocks = map.getBlocks();
+        this.stage1 = new Stage1(player1, player2);
 
         this.addKeyListener(new KeyListener());
         this.requestFocus();
@@ -78,6 +75,11 @@ public class GamePanel extends JLayeredPane {
 
         this.gameThread = new GameThread();
         gameThread.start();
+
+        new ServerMessageListener(ois).start();
+
+        // 서버에 연결
+        connectToServer(ip, port);
     }
 
     @Override
@@ -86,50 +88,6 @@ public class GamePanel extends JLayeredPane {
         stage1.draw(g); // Stage1 그리기
         player1.draw(g);
         player2.draw(g);
-    }
-
-    // 게임 루프 - 플레이어 상태 업데이트 및 화면 다시 그리기
-    public void gameLoop() {
-        while(true) {
-            updateGame();
-            player1.update();
-            player2.update();
-            repaint(); // 화면 다시 그리기
-
-            // 시간 지연을 위한 대기 (예: 16ms, 대략 60FPS)
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    public void updateGame() {
-        // 플레이어1의 움직임 업데이트
-        updatePlayer(player1);
-        // 플레이어2의 움직임 업데이트 (네트워크 데이터를 기반으로 할 수 있음)
-        updatePlayer(player2);
-
-        stage1.checkCollisions();
-        repaint();
-    }
-
-    private void updatePlayer(Player player) {
-//        if (leftPressed) {
-//            player.setVelocityX(-5);
-//        } else if (rightPressed) {
-//            player.setVelocityX(5);
-//        } else {
-//            player.setVelocityX(0);
-//        }
-//
-//        if (upPressed && player.isOnGround()) {
-//            player.jump();
-//        }
-
-        player.update();
     }
 
 
@@ -156,45 +114,26 @@ public class GamePanel extends JLayeredPane {
     }
 
 
-    public void movePlayerPosition(String[] playerInfo) {
-        String[] position = playerInfo[1].split(",");
-        double x = Integer.parseInt(position[0]);
-        double y = Integer.parseInt(position[1]);
-        //System.out.println("GamePanel position ###### " + x + ":" + y);
 
-        Player other;
-        if (Integer.parseInt(playerInfo[0]) == 1)
-            other = player1;
-        else
-            other = player2;
-
-    }
-
-
-    // 서버와의 연결을 설정하는 메소드
+    // 서버와의 연결을 설정하는 메소드 수정
     public void connectToServer(String ip, int port) {
         try {
             Socket socket = new Socket(ip, port);
             this.oos = new ObjectOutputStream(socket.getOutputStream());
+            this.ois = new ObjectInputStream(socket.getInputStream());
+            new ServerMessageListener(ois).start(); // 메시지 리스너 시작
         } catch (IOException e) {
             e.printStackTrace();
             // 연결 오류 처리
         }
     }
 
-    // 네트워크를 통해 메시지 전송하는 메소드
-    public void sendKeyAction(String actionCode) {
-        try {
-            ChatMsg message = new ChatMsg(userName, actionCode, myPlayerNum + "@@");
-            oos.writeObject(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-            // 메시지 전송 오류 처리
-        }
-    }
 
     // 플레이어 위치 업데이트 메서드
     private void updatePlayerPosition(Player player, boolean left, boolean right, boolean up, boolean down) {
+        if (oos == null) {
+            return; // ObjectOutputStream이 초기화되지 않았다면 함수 종료
+        }
         if (left) {
             player.setX(player.getX() - MOVE_SPEED);
         }
@@ -207,12 +146,13 @@ public class GamePanel extends JLayeredPane {
         if (down) {
             player.setY(player.getY() + MOVE_SPEED);
         }
+        // 위치가 변경되면 서버에 전송
+        sendPlayerPosition(player);
     }
     // 서버에 플레이어 움직임을 전송하는 메소드
     public void sendPlayerMovement(String action) {
         try {
-            // 플레이어의 현재 위치에 대한 메시지 생성
-            ChatMsg message = new ChatMsg(userName, "player_move", action);
+            ChatMsg message = new ChatMsg(userName, "player_move", myPlayerNum + "@@" + action);
             oos.writeObject(message);
         } catch (IOException e) {
             System.err.println("Error sending player movement: " + e.getMessage());
@@ -221,84 +161,144 @@ public class GamePanel extends JLayeredPane {
     class KeyListener extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
-            // 현재 플레이어 객체를 결정합니다.
             Player currentPlayer = myPlayerNum == 1 ? player1 : player2;
+            boolean movementUpdated = false;
 
-            // 현재 플레이어의 키 이벤트를 처리합니다.
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
                     leftPressed = true;
+                    movementUpdated = true;
                     break;
                 case KeyEvent.VK_RIGHT:
                     rightPressed = true;
+                    movementUpdated = true;
                     break;
                 case KeyEvent.VK_UP:
                     upPressed = true;
+                    movementUpdated = true;
                     break;
                 case KeyEvent.VK_DOWN:
                     downPressed = true;
+                    movementUpdated = true;
                     break;
             }
-            updatePlayerPosition(currentPlayer, leftPressed, rightPressed, upPressed, downPressed);
-            sendPlayerMovement("keyPressed:" + e.getKeyCode());
+
+            if (movementUpdated && oos != null) { // oos가 null이 아닐 때만 실행
+                updatePlayerPosition(currentPlayer, leftPressed, rightPressed, upPressed, downPressed);
+                sendPlayerMovement("keyPressed:" + e.getKeyCode());
+            }
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-            // 현재 플레이어 객체를 결정합니다.
             Player currentPlayer = myPlayerNum == 1 ? player1 : player2;
+            boolean movementUpdated = false;
 
-            // 현재 플레이어의 키 이벤트를 처리합니다.
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
                     leftPressed = false;
+                    movementUpdated = true;
                     break;
                 case KeyEvent.VK_RIGHT:
                     rightPressed = false;
+                    movementUpdated = true;
                     break;
                 case KeyEvent.VK_UP:
                     upPressed = false;
+                    movementUpdated = true;
                     break;
                 case KeyEvent.VK_DOWN:
                     downPressed = false;
+                    movementUpdated = true;
                     break;
             }
-            updatePlayerPosition(currentPlayer, leftPressed, rightPressed, upPressed, downPressed);
-            sendPlayerMovement("keyReleased:" + e.getKeyCode());
+
+            if (movementUpdated && oos != null) { // oos가 null이 아닐 때만 실행
+                updatePlayerPosition(currentPlayer, leftPressed, rightPressed, upPressed, downPressed);
+                sendPlayerMovement("keyReleased:" + e.getKeyCode());
+            }
+        }
+    }
+
+    // 게임 패널 내 위치 정보 전송 메소드 추가
+    public void sendPlayerPosition(Player player) {
+        try {
+            String positionData = player.getX() + "," + player.getY();
+            ChatMsg message = new ChatMsg(userName, "player_position", myPlayerNum + "@@" + positionData);
+            oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public void updatePlayerFromServer(String playerInfo) {
         String[] parts = playerInfo.split("@@");
         int playerNum = Integer.parseInt(parts[0]);
-        String action = parts[1];
+        String[] position = parts[1].split(",");
+        int x = Integer.parseInt(position[0]);
+        int y = Integer.parseInt(position[1]);
 
         Player playerToUpdate = playerNum == 1 ? player1 : player2;
-
-        switch (action) {
-            case "VK_LEFT_PRESSED":
-                playerToUpdate.setX(playerToUpdate.getX() - MOVE_SPEED);
-                break;
-            case "VK_RIGHT_PRESSED":
-                playerToUpdate.setX(playerToUpdate.getX() + MOVE_SPEED);
-                break;
-            case "VK_UP_PRESSED":
-                playerToUpdate.setY(playerToUpdate.getY() - MOVE_SPEED);
-                break;
-            case "VK_DOWN_PRESSED":
-                playerToUpdate.setY(playerToUpdate.getY() + MOVE_SPEED);
-                break;
-            case "VK_LEFT_RELEASED":
-            case "VK_RIGHT_RELEASED":
-                // 가로 이동 중지
-                break;
-            case "VK_UP_RELEASED":
-            case "VK_DOWN_RELEASED":
-                // 세로 이동 중지
-                break;
-            // 추가적인 키 이벤트 처리
-        }
+        playerToUpdate.setX(x);
+        playerToUpdate.setY(y);
     }
+
+    //서버로부터 메시지 수신
+    class ServerMessageListener extends Thread {
+
+        private final ObjectInputStream ois;
+
+        public ServerMessageListener(ObjectInputStream ois) {
+            this.ois = ois;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    Object obj = ois.readObject();
+                    if (obj instanceof ChatMsg) {
+                        ChatMsg msg = (ChatMsg) obj;
+                        switch (msg.getCode()) {
+                            case "update_position":
+                                // 다른 플레이어의 위치 업데이트
+                                updatePlayerFromServer(msg.getData());
+                                break;
+                            case "player_move":
+                                // 다른 플레이어의 움직임 처리
+                                processPlayerMove(msg.getData());
+                                break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 다른 플레이어의 움직임 처리
+        private void processPlayerMove(String data) {
+            // 데이터 분할: "playerNumber,x,y"
+            String[] parts = data.split(",");
+            if (parts.length != 3) {
+                return; // 데이터 형식이 잘못되었을 경우
+            }
+
+            int playerNumber = Integer.parseInt(parts[0]);
+            int x = Integer.parseInt(parts[1]);
+            int y = Integer.parseInt(parts[2]);
+
+            // 현재 플레이어와 다른 플레이어의 움직임을 업데이트
+            if (playerNumber != myPlayerNum) {
+                Player otherPlayer = playerNumber == 1 ? player1 : player2;
+                otherPlayer.setX(x);
+                otherPlayer.setY(y);
+                repaint(); // 화면을 다시 그려서 변경 사항 반영
+            }
+        }
+
+    }
+
 
 
 }
