@@ -24,4 +24,8 @@ class Platform {
     public int getY() {
         return y;
     }
+
+    public int getHeight() {
+        return height;
+    }
 }

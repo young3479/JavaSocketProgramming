@@ -80,11 +80,33 @@ public class Stage1 {
         checkCollisionForPlayer(player2);
     }
 
+
+
+//    private void checkCollisionForPlayer(Player player) {
+//        for (Platform platform : platforms) {
+//            if (player.getBounds().intersects(platform.getBounds())) {
+//                player.setOnGround(true);
+//                player.setY(platform.getY() - player.getSize());
+//                return;
+//            }
+//        }
+//        player.setOnGround(false);
+//    }
+
     private void checkCollisionForPlayer(Player player) {
         for (Platform platform : platforms) {
             if (player.getBounds().intersects(platform.getBounds())) {
-                player.setOnGround(true);
-                player.setY(platform.getY() - player.getSize());
+                // Collision from the top of the platform
+                if (player.getVelocityY() > 0) {
+                    player.setOnGround(true);
+                    player.setY(platform.getY() - player.getSize());
+                    player.setVelocityY(0);
+                }
+                // Collision from below the platform
+                else if (player.getVelocityY() < 0) {
+                    player.setY(platform.getY() + platform.getHeight());
+                    player.setVelocityY(0); // Stop upward movement
+                }
                 return;
             }
         }
