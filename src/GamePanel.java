@@ -63,7 +63,7 @@ public class GamePanel extends JLayeredPane {
         // 배경 색 설정 및 기타 설정
         setOpaque(true);
         this.setBackground(Color.WHITE);
-        this.stage1 = new Stage1(player1, player2);
+        this.stage1 = new Stage1(player1, player2, this);
         this.addKeyListener(new KeyListener());
         this.requestFocus();
         this.setFocusable(true);
@@ -90,7 +90,9 @@ public class GamePanel extends JLayeredPane {
         return userName;
     }
 
-
+    public void repaintPanel() {
+        repaint();
+    }
 
     class GameThread extends Thread {
 
@@ -105,7 +107,8 @@ public class GamePanel extends JLayeredPane {
                     // 승자가 있는지 확인
                     Player winner = stage1.checkWinner();
                     if (winner != null) {
-                        // 승자가 결정되면 GameEndingPanel로 전환
+                        // 승자가 결정되면 3초후 GameEndingPanel로 전환
+                        Thread.sleep(3000);
                         EventQueue.invokeLater(() -> switchToEndingPanel(winner.getPlayerNum()));
                         break;
                     }

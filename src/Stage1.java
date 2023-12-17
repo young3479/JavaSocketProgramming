@@ -1,5 +1,10 @@
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 //오픈소스 사용안한 클래스
 
 public class Stage1 {
@@ -11,9 +16,15 @@ public class Stage1 {
     int borderThickness = 40;
     private Platform finishLine;
 
-    public Stage1(Player player1, Player player2) {
+    private List<String> newFinishLineImages = Arrays.asList("Image/Item/door3.png", "Image/Item/door4.png", "Image/Item/door5.png", "Image/Item/door6.png");
+    private int imageIndex = 0;
+    private GamePanel gamePanel; // GamePanel 참조를 위한 필드 추가
+
+
+    public Stage1(Player player1, Player player2, GamePanel gamePanel) {
         this.player1 = player1;
         this.player2 = player2;
+        this.gamePanel = gamePanel;
         platforms = new ArrayList<>();
 
 
@@ -49,12 +60,22 @@ public class Stage1 {
 
     // 도착 지점에 도달했는지 확인하는 메서드
     public Player checkWinner() {
-        if (player1.getBounds().intersects(finishLine.getBounds())) {
-            return player1;
-        } else if (player2.getBounds().intersects(finishLine.getBounds())) {
-            return player2;
+        if (player1.getBounds().intersects(finishLine.getBounds()) || player2.getBounds().intersects(finishLine.getBounds())) {
+            Timer timer = new Timer(500, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (imageIndex < newFinishLineImages.size()) {
+                        finishLine.setImagePath(newFinishLineImages.get(imageIndex++));
+                        gamePanel.repaint(); // 화면 갱신을 위한 repaint 호출
+                    } else {
+                        ((Timer)e.getSource()).stop(); // 타이머 중지
+                    }
+                }
+            });
+            timer.start();
+            return player1.getBounds().intersects(finishLine.getBounds()) ? player1 : player2;
         }
-        return null; // 아무도 도착하지 않음
+        return null;
     }
     public void draw(Graphics g) {
         // 여기에 플랫폼과 플레이어를 그리는 코드를 추가
