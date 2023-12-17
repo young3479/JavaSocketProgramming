@@ -135,11 +135,15 @@ public class GameWaitingPanel extends JFrame {
             Player player1 = new Player(1, 100, 100, "/Image/player/ember1.png");
             Player player2 = new Player(2, 200, 100, "/Image/player/wade1.png");
 
-            GamePanel gamePanel = new GamePanel(player1, player2, myPlayerNum, out, in);
+            String ip = txtIpAddress.getText().trim();
+            int port = Integer.parseInt(txtPortNumber.getText().trim());
+
+            GamePanel gamePanel = new GamePanel(player1, player2, myPlayerNum, ip, port);
             setContentPane(gamePanel);
             pack();
             gamePanel.requestFocusInWindow();
         }
+
 
 
     }

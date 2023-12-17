@@ -36,6 +36,7 @@ public class GamePanel extends JLayeredPane {
 
     private Stage1 stage1; //맵추가
 
+    //private ObjectOutputStream oos;
     private ObjectInputStream ois;
 
     int panelWidth = 730;
@@ -45,12 +46,12 @@ public class GamePanel extends JLayeredPane {
     /**
      * Create the panel.
      */
-    public GamePanel(Player player1, Player player2, int myPlayerNum, ObjectOutputStream oos, ObjectInputStream ois) {
+    public GamePanel(Player player1, Player player2, int myPlayerNum, String ip, int port) {
         this.player1 = player1;
         this.player2 = player2;
         this.myPlayerNum = myPlayerNum;
-        this.oos = oos; // ObjectOutputStream 설정
-        this.ois = ois; // ObjectInputStream 설정
+//        this.oos = oos;
+//        this.ois = ois;
 
         // 플레이어 객체 할당
         if (myPlayerNum == 1)
@@ -58,29 +59,21 @@ public class GamePanel extends JLayeredPane {
         else
             myself = player2;
 
-
-        // 배경 색 설정
+        // 배경 색 설정 및 기타 설정
         setOpaque(true);
-
         this.setBackground(Color.WHITE);
-
         this.stage1 = new Stage1(player1, player2);
-
         this.addKeyListener(new KeyListener());
         this.requestFocus();
         this.setFocusable(true);
-        //게임패널 크기
         setPreferredSize(new Dimension(730, 730));
 
         this.gameThread = new GameThread();
         gameThread.start();
 
-        new ServerMessageListener(ois).start();
-
-        // 서버에 연결
+        // 서버에 연결하고 스트림 초기화
+        connectToServer(ip, port);
         new ServerMessageListener(this.ois).start();
-
-        setPreferredSize(new Dimension(panelWidth, panelHeight));
     }
 
     @Override
@@ -135,13 +128,12 @@ public class GamePanel extends JLayeredPane {
 
 
 
-    // 서버와의 연결을 설정하는 메소드 수정
-    public void connectToServer(String ip, int port) {
+    // 서버와의 연결을 설정하는 메소드
+    private void connectToServer(String ip, int port) {
         try {
             Socket socket = new Socket(ip, port);
             this.oos = new ObjectOutputStream(socket.getOutputStream());
             this.ois = new ObjectInputStream(socket.getInputStream());
-            new ServerMessageListener(ois).start(); // 메시지 리스너 시작
         } catch (IOException e) {
             e.printStackTrace();
             // 연결 오류 처리
