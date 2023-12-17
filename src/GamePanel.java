@@ -67,7 +67,7 @@ public class GamePanel extends JLayeredPane {
         this.addKeyListener(new KeyListener());
         this.requestFocus();
         this.setFocusable(true);
-        setPreferredSize(new Dimension(730, 730));
+        setPreferredSize(new Dimension(720, 720));
 
         this.gameThread = new GameThread();
         gameThread.start();

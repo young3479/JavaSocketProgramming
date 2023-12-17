@@ -108,7 +108,7 @@ public class GameWaitingPanel extends JFrame {
                 new Thread(() -> {
                     while (true) {
                         try {
-                            Object receivedObj = in.readObject();
+                            Object receivedObj = in.readObject(); //여기 체크!!!!
                             if (receivedObj instanceof ChatMsg chatMsg) {
                                 if (chatMsg.getCode().equals("PLAYER_NUMBER")) {
                                     // 서버로부터 플레이어 번호 받기
@@ -132,16 +132,21 @@ public class GameWaitingPanel extends JFrame {
         }
 
         private void startGame() {
-            Player player1 = new Player(1, 100, 100, "/Image/player/ember1.png");
-            Player player2 = new Player(2, 200, 100, "/Image/player/wade1.png");
+            Player player1 = new Player(1, 35, 673, "/Image/player/ember1.png");
+            Player player2 = new Player(2, 645, 0, "/Image/player/wade1.png");
 
             String ip = txtIpAddress.getText().trim();
             int port = Integer.parseInt(txtPortNumber.getText().trim());
             String userName = txtUserName.getText().trim();
 
+            JFrame frame = new JFrame("Game");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             GamePanel gamePanel = new GamePanel(player1, player2, myPlayerNum, ip, port, userName);
-            setContentPane(gamePanel);
-            pack();
+            frame.add(gamePanel);
+            frame.pack();
+            frame.setResizable(false); // 사용자가 크기를 변경할 수 없도록 설정
+            frame.setVisible(true);
+
             gamePanel.requestFocusInWindow();
         }
 

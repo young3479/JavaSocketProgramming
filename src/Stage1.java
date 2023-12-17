@@ -19,6 +19,35 @@ public class Stage1 {
     private List<String> newFinishLineImages = Arrays.asList("Image/Item/door3.png", "Image/Item/door4.png", "Image/Item/door5.png", "Image/Item/door6.png");
     private int imageIndex = 0;
     private GamePanel gamePanel; // GamePanel 참조를 위한 필드 추가
+    private int[][] map = {
+            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1},
+            {1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1},
+            {1,0,1,1,1,1,1,0,1,1,0,1,0,1,0,1,1,1,1,1},
+            {1,0,0,0,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,1},
+            {1,0,1,0,1,1,1,1,1,1,0,1,1,1,0,1,1,1,0,1},
+            {1,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,1},
+            {1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1},
+            {1,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,1},
+            {1,0,1,1,0,0,1,0,1,0,0,1,0,1,1,1,1,1,0,1},
+            {1,0,1,0,0,0,1,0,1,1,0,0,0,0,0,0,0,1,0,1},
+            {1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0,1,0,1},
+            {1,0,1,0,1,0,0,0,1,0,0,1,0,0,0,1,0,1,0,1},
+            {1,0,1,0,1,1,1,1,1,0,0,1,0,1,0,1,0,1,0,1},
+            {1,0,0,0,0,0,0,0,1,0,1,1,0,1,0,1,0,0,0,1},
+            {1,1,0,1,1,1,1,0,1,0,0,1,0,1,1,1,1,1,1,1},
+            {1,1,0,1,0,0,1,0,1,1,0,1,0,0,0,0,0,0,0,1},
+            {1,0,0,1,0,0,0,0,1,0,0,1,0,1,1,1,0,1,1,1},
+            {1,1,1,1,0,1,1,0,1,0,1,1,0,1,0,1,0,0,0,1},
+            {1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1,0,1,0,1},
+            {1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+
+    };
+
+    private int mapRows = 20; // 맵 배열의 행 수
+    private int mapColumns = 20; // 맵 배열의 열 수
+
+    private int platformWidth = panelWidth / mapColumns; // 플랫폼 너비
+    private int platformHeight = panelHeight / mapRows; // 플랫폼 높이
 
 
     public Stage1(Player player1, Player player2, GamePanel gamePanel) {
@@ -27,32 +56,34 @@ public class Stage1 {
         this.gamePanel = gamePanel;
         platforms = new ArrayList<>();
 
+        initializePlatforms();
+
 
         // 블럭추가
 
-        // 상단
-        platforms.add(new Platform(0, 0, panelWidth, borderThickness,"Image/block/block2.png"));
-        // 하단
-        platforms.add(new Platform(0, panelHeight - borderThickness, panelWidth, borderThickness, "Image/block/block2.png"));
-        // 왼쪽
-        platforms.add(new Platform(0, 0, borderThickness, panelHeight, "Image/block/block3.png"));
-        // 오른쪽
-        platforms.add(new Platform(panelWidth - borderThickness, 0, borderThickness, panelHeight, "Image/block/block3.png"));
+//        // 상단
+//        platforms.add(new Platform(0, 0, panelWidth, borderThickness,"Image/block/block2.png"));
+//        // 하단
+//        platforms.add(new Platform(0, panelHeight - borderThickness, panelWidth, borderThickness, "Image/block/block2.png"));
+//        // 왼쪽
+//        platforms.add(new Platform(0, 0, borderThickness, panelHeight, "Image/block/block3.png"));
+//        // 오른쪽
+//        platforms.add(new Platform(panelWidth - borderThickness, 0, borderThickness, panelHeight, "Image/block/block3.png"));
 
         // 계단
-        platforms.add(new Platform(100, 500, 520, 20, "Image/block/block2.png"));
-        platforms.add(new Platform(250, 400, 100, 20, "Image/block/block2.png"));
-        platforms.add(new Platform(400, 300, 100, 20, "Image/block/block2.png"));
-        platforms.add(new Platform(590, 200, 100, 20, "Image/block/block2.png"));
-        platforms.add(new Platform(40, 200, 100, 20, "Image/block/block2.png"));
+//        platforms.add(new Platform(100, 500, 520, 20, "Image/block/block2.png"));
+//        platforms.add(new Platform(250, 400, 100, 20, "Image/block/block2.png"));
+//        platforms.add(new Platform(400, 300, 100, 20, "Image/block/block2.png"));
+//        platforms.add(new Platform(590, 200, 100, 20, "Image/block/block2.png"));
+//        platforms.add(new Platform(40, 200, 100, 20, "Image/block/block2.png"));
 
 
 
-        // 도착 지점 생성, 예를 들어 x 좌표가 590인 지점에 도착 지점 설정
-        finishLine = new Platform(400, 444, 70, 60,"Image/Item/door3.png");
+        // 도착 지점 생성
+        finishLine = new Platform(140, 290, 70, 60,"Image/Item/door3.png");
         platforms.add(finishLine);
 
-        platforms.add(new Platform(590, 115, 100, 100, "Image/Item/door.png"));
+        //platforms.add(new Platform(590, 115, 100, 100, "Image/Item/door.png"));
 
 
     }
@@ -85,38 +116,14 @@ public class Stage1 {
        // player.draw(g);
     }
 
-
-    public void checkCollisions() {
-        checkCollisionForPlayer(player1);
-        checkCollisionForPlayer(player2);
-    }
-
-
-    private void checkCollisionForPlayer(Player player) {
-        for (Platform platform : platforms) {
-            if (player.getBounds().intersects(platform.getBounds())) {
-                // 반발력 설정
-                int reboundForceX = 10; // 수평 반발력의 크기
-                int reboundForceY = 10; // 수직 반발력의 크기
-
-                // 플레이어의 현재 속도와 위치를 고려하여 충돌 처리
-                int velocityX = player.getVelocityX();
-                int velocityY = player.getVelocityY();
-
-                // 수평 충돌 처리
-                if (Math.abs(velocityX) > 0) {
-                    player.setVelocityX((int) (-reboundForceX * Math.signum(velocityX)));
-                    player.setX(player.getPreviousX());
+    private void initializePlatforms() {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                if (map[i][j] == 1) {
+                    // 플랫폼 생성 로직
+                    platforms.add(new Platform(j * platformWidth, i * platformHeight, platformWidth, platformHeight, "Image/block/block3.png"));
                 }
-
-                // 수직 충돌 처리
-                if (Math.abs(velocityY) > 0) {
-                    player.setVelocityY((int) (-reboundForceY * Math.signum(velocityY)));
-                    player.setY(player.getPreviousY());
-                }
-
-
-                break; // 하나의 플랫폼과 충돌이 감지되면 더 이상 검사할 필요 없음
+                // 다른 숫자에 대한 처리
             }
         }
     }
