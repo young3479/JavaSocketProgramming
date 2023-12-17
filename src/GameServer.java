@@ -1,5 +1,3 @@
-
-
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,7 +7,6 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,8 +16,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-
-
 
 public class GameServer extends JFrame {
 
@@ -36,10 +31,6 @@ public class GameServer extends JFrame {
     private Vector UserVec = new Vector(); // 연결된 사용자를 저장할 벡터
     private boolean gameStarted = false; // 게임 시작 여부를 추적하는 플래그
 
-
-    /**
-     * Launch the application.
-     */
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -53,9 +44,6 @@ public class GameServer extends JFrame {
         });
     }
 
-    /**
-     * Create the frame.
-     */
     public GameServer() {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -255,44 +243,15 @@ public class GameServer extends JFrame {
 
                         // 클라이언트로부터 받은 메시지 처리
                         switch (chatMsg.getCode()) {
-                            case "update_position":
-                                // Handle player position updates
+                            case "update_position": // 꼭필요!!!!
                                 String positionData = chatMsg.getData();
                                 WriteOthers(positionData, "update_position");
                                 break;
-                            case "101": // 사용자 입장 메시지
-                                UserName = chatMsg.getId();
-                                String entranceMsg = chatMsg.getData();
-                                AppendText(entranceMsg); // 서버 화면에 입장 메시지 출력
-                                break;
-
-                            case "103": // 게임 시작
-                                WriteOthers("start", "103");
-                                break;
-
-                            case "300": // stage 이동
-                                WriteOthers(chatMsg.getData(), "300");
-                                WriteOne(chatMsg.getData(), "300");
-                                break;
-
-                            case "401": // player 움직임 keyPressed
-                                String actionMessage = "[" + UserName + "] pressed " + chatMsg.getData();
-                                WriteAll(actionMessage, "401");
-                                break;
-
-                            case "402": // player 움직임 keyReleased
-                                WriteOthers(chatMsg.getData(), "402");
-                                break;
-
-                            case "403": // player 움직임 (x,y)
-                                WriteOthers(chatMsg.getData(), "403");
-                                break;
-
-                            case "player_position": // 플레이어 위치 정보 수신
-                                String[] data = chatMsg.getData().split("@@");
+                            case "player_position": // 플레이어 위치 정보 수신 (꼭필요!!!!!!)
+                                String[] data = chatMsg.getData().split("@");
                                 int playerNumber = Integer.parseInt(data[0]);
                                 String position = data[1];
-                                WriteOthers(playerNumber + "@@" + position, "update_position");
+                                WriteOthers(playerNumber + "@" + position, "update_position");
                                 break;
 
                             case "player_move":
@@ -307,14 +266,6 @@ public class GameServer extends JFrame {
                                 WriteAll(winnerMessage, "game_result");
                                 break;
                         }
-
-//                        // 상대 플레이어의 위치 업데이트
-//                        if (playerNumber != myPlayerNum) {
-//                            Player opponentPlayer = playerNumber == 1 ? player1 : player2;
-//                            opponentPlayer.setX(x);
-//                            opponentPlayer.setY(y);
-//                            repaint(); // 화면을 다시 그려서 변경 사항 반영
-//                        }
 
                         // 두 명의 플레이어가 모두 연결되었고, 게임이 아직 시작되지 않았을 때
                         if (UserVec.size() == 2 && !gameStarted) {

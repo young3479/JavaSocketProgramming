@@ -8,8 +8,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class GameClient extends KeyAdapter {
-    private Socket serverSocket;
-    private ObjectOutputStream out;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {

@@ -1,5 +1,3 @@
-//Java Client 시작
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,9 +26,6 @@ public class GameWaitingPanel extends JFrame {
     private ObjectInputStream in; // 서버로부터 메시지를 받기 위한 스트림
 
     private ObjectOutputStream out;
-    /**
-     * Launch the application.
-     */
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -44,9 +39,6 @@ public class GameWaitingPanel extends JFrame {
         });
     }
 
-    /**
-     * Create the frame.
-     */
     public GameWaitingPanel() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 254, 321);
@@ -117,16 +109,14 @@ public class GameWaitingPanel extends JFrame {
                     while (true) {
                         try {
                             Object receivedObj = in.readObject();
-                            if (receivedObj instanceof ChatMsg) {
-                                ChatMsg chatMsg = (ChatMsg) receivedObj;
+                            if (receivedObj instanceof ChatMsg chatMsg) {
                                 if (chatMsg.getCode().equals("PLAYER_NUMBER")) {
                                     // 서버로부터 플레이어 번호 받기
                                     String playerNumStr = chatMsg.getData().split(":")[1];
-                                    int playerNum = Integer.parseInt(playerNumStr.trim());
-                                    myPlayerNum = playerNum; // 플레이어 번호 저장
+                                    myPlayerNum = Integer.parseInt(playerNumStr.trim()); // 플레이어 번호 저장
                                 } else if (chatMsg.getCode().equals("GAME_START")) {
                                     // 서버로부터 게임 시작 메시지를 받으면
-                                    EventQueue.invokeLater(() -> startGame());
+                                    EventQueue.invokeLater(this::startGame);
                                 }
                             }
                         } catch (ClassNotFoundException | IOException ex) {
@@ -145,14 +135,12 @@ public class GameWaitingPanel extends JFrame {
             Player player1 = new Player(1, 100, 100, "/Image/player/ember1.png");
             Player player2 = new Player(2, 200, 100, "/Image/player/wade1.png");
 
-            String ip = txtIpAddress.getText().trim();
-            int port = Integer.parseInt(txtPortNumber.getText().trim());
-
-            GamePanel gamePanel = new GamePanel(player1, player2, myPlayerNum, ip, port);
+            GamePanel gamePanel = new GamePanel(player1, player2, myPlayerNum, out, in);
             setContentPane(gamePanel);
             pack();
             gamePanel.requestFocusInWindow();
         }
+
 
     }
 }

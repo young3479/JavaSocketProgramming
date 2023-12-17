@@ -146,11 +146,4 @@ class Player implements Serializable {
     }
 
 
-    // 네트워크 업데이트 메서드
-    public void networkUpdate(NetworkHandler networkHandler) {
-        // 네트워크를 통해 플레이어 상태 전송
-        networkHandler.sendPlayerState(this);
-    }
-
-
 }

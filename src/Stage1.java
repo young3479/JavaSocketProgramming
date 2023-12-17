@@ -64,34 +64,12 @@ public class Stage1 {
        // player.draw(g);
     }
 
-//    public void checkCollisions() {
-//        for (Platform platform : platforms) {
-//            if (player1.getBounds().intersects(platform.getBounds())) {
-//                player1.setOnGround(true);
-//                player1.setY(platform.getY() - player1.getSize());
-//                return;
-//            }
-//        }
-//        player1.setOnGround(false);
-//    }
 
     public void checkCollisions() {
         checkCollisionForPlayer(player1);
         checkCollisionForPlayer(player2);
     }
 
-
-
-//    private void checkCollisionForPlayer(Player player) {
-//        for (Platform platform : platforms) {
-//            if (player.getBounds().intersects(platform.getBounds())) {
-//                player.setOnGround(true);
-//                player.setY(platform.getY() - player.getSize());
-//                return;
-//            }
-//        }
-//        player.setOnGround(false);
-//    }
 
     private void checkCollisionForPlayer(Player player) {
         for (Platform platform : platforms) {
@@ -116,8 +94,6 @@ public class Stage1 {
                     player.setY(player.getPreviousY());
                 }
 
-                // 플레이어의 위치를 플랫폼 경계 바깥으로 조정
-                // ...
 
                 break; // 하나의 플랫폼과 충돌이 감지되면 더 이상 검사할 필요 없음
             }

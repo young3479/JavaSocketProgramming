@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.awt.Graphics;
@@ -16,13 +15,6 @@ import javax.swing.*;
 
 public class GamePanel extends JLayeredPane {
 
-    private boolean leftPressed = false;
-    private boolean rightPressed = false;
-    private boolean upPressed = false;
-    private boolean downPressed = false;
-
-
-    private ArrayList<Platform> platforms;
     private Player player1;
     private Player player2;
 
@@ -53,10 +45,12 @@ public class GamePanel extends JLayeredPane {
     /**
      * Create the panel.
      */
-    public GamePanel(Player player1, Player player2, int myPlayerNum, String ip, int port) {
+    public GamePanel(Player player1, Player player2, int myPlayerNum, ObjectOutputStream oos, ObjectInputStream ois) {
         this.player1 = player1;
         this.player2 = player2;
         this.myPlayerNum = myPlayerNum;
+        this.oos = oos; // ObjectOutputStream 설정
+        this.ois = ois; // ObjectInputStream 설정
 
         // 플레이어 객체 할당
         if (myPlayerNum == 1)
@@ -84,7 +78,7 @@ public class GamePanel extends JLayeredPane {
         new ServerMessageListener(ois).start();
 
         // 서버에 연결
-        connectToServer(ip, port);
+        new ServerMessageListener(this.ois).start();
 
         setPreferredSize(new Dimension(panelWidth, panelHeight));
     }
@@ -111,13 +105,6 @@ public class GamePanel extends JLayeredPane {
             while (true) {
                 try {
 
-//                    // 플레이어의 위치와 상태를 업데이트
-//                    player1.update();
-//                    player2.update();
-//                    // 충돌 처리
-//                    stage1.checkCollisions(); //수정 성공 (중력 구현)
-                    //gameControll();
-//여기 함수 어떻게 순서 정할지도 중요한듯
                     repaint();
                     Thread.sleep(20); //수정 초기값 20
 
@@ -136,15 +123,6 @@ public class GamePanel extends JLayeredPane {
         }
     }
 
-    // 승자가 결정되었을 때 서버에 결과를 전송
-    private void sendGameResult(int winnerPlayerNum) {
-        try {
-            ChatMsg message = new ChatMsg(userName, "game_result", "Winner is Player " + winnerPlayerNum);
-            oos.writeObject(message);
-        } catch (IOException e) {
-            System.err.println("Error sending game result: " + e.getMessage());
-        }
-    }
 
     // 승자가 결정되었을 때 호출되는 메서드
     private void switchToEndingPanel(int winnerPlayerNum) {
@@ -169,14 +147,6 @@ public class GamePanel extends JLayeredPane {
             // 연결 오류 처리
         }
     }
-    public void gameControll() {
-
-
-                    player1.update();
-                    player2.update();
-                    // 충돌 처리
-                    stage1.checkCollisions(); //수정 성공 (중력 구현)
-    }
 
     // 플레이어 위치 업데이트 메서드
     private void updatePlayerPosition(Player player, boolean left, boolean right, boolean up, boolean down) {
@@ -197,52 +167,6 @@ public class GamePanel extends JLayeredPane {
         sendPlayerPosition(player);
     }
 
-
-
-//// 수평 이동
-//        if (left) {
-//            player.setVelocityX(-MOVE_SPEED);
-//        } else if (right) {
-//            player.setVelocityX(MOVE_SPEED);
-//        } else {
-//            player.setVelocityX(0); // 왼쪽이나 오른쪽이 눌리지 않으면 수평 속도를 0으로 설정
-//        }
-//
-//        // 점프 체크
-//
-//       if (up && player.isOnGround()) {
-//            player.jump();
-//        }
-//
-//        // 중력 적용 (점프 후에 중력을 적용하도록 순서 변경)
-//        if (!player.isOnGround()) {
-//            player.setVelocityY(player.getVelocityY() + Player.GRAVITY);
-//        }
-//
-//
-//        player.update(); // 플레이어의 위치 업데이트
-//
-//
-//        // 충돌 처리
-//        stage1.checkCollisions();
-//
-//
-//
-//        // 위치가 변경되면 서버에 전송
-//        sendPlayerPosition(player);
-
-
-
-
-    // 서버에 플레이어 움직임을 전송하는 메소드
-    public void sendPlayerMovement(String action) {
-        try {
-            ChatMsg message = new ChatMsg(userName, "player_move", myPlayerNum + "@@" + action);
-            oos.writeObject(message);
-        } catch (IOException e) {
-            System.err.println("Error sending player movement: " + e.getMessage());
-        }
-    }
     class KeyListener extends KeyAdapter {
         private Set<Integer> pressedKeys = new HashSet<>();
         @Override
@@ -265,30 +189,25 @@ public class GamePanel extends JLayeredPane {
             if (oos != null) { // Check if the ObjectOutputStream is not null
                 Player currentPlayer = myPlayerNum == 1 ? player1 : player2;
                 updatePlayerPosition(currentPlayer, left, right, up, down);
-                sendPlayerMovement(generateMovementString(left, right, up, down));
             }
-        }
-        private String generateMovementString(boolean left, boolean right, boolean up, boolean down) {
-            // Create a string representing the current movement state
-            // Example: "Left:True, Right:False, Up:True, Down:False"
-            return "Left:" + left + ", Right:" + right + ", Up:" + up + ", Down:" + down;
         }
     }
 
-    // 게임 패널 내 위치 정보 전송 메소드 추가
+    // 게임 패널 내 위치 정보 전송 메소드 추가 (꼭필요!!!!!! 있어야 코드 돌아감)
     public void sendPlayerPosition(Player player) {
         try {
             String positionData = player.getX() + "," + player.getY();
-            ChatMsg message = new ChatMsg(userName, "player_position", myPlayerNum + "@@" + positionData);
+            ChatMsg message = new ChatMsg(userName, "player_position", myPlayerNum + "@" + positionData);
             oos.writeObject(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    //꼭 필요!!!!!!
     public void updatePlayerFromServer(String playerInfo) {
         SwingUtilities.invokeLater(() -> {
-        String[] parts = playerInfo.split("@@");
+        String[] parts = playerInfo.split("@");
         int playerNum = Integer.parseInt(parts[0]);
         String[] position = parts[1].split(",");
         int x = Integer.parseInt(position[0]);
@@ -299,44 +218,13 @@ public class GamePanel extends JLayeredPane {
         playerToUpdate.setX(x);
         playerToUpdate.setY(y);
 
-//// 중력 적용 및 위치 업데이트
-//        playerToUpdate.update(); //수정성공 (중력 기능구현)
-//
-//        // 화면을 다시 그려 변경 사항 반영
-//        repaint();
         });
-    }
-
-
-    class SendThread extends Thread {
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    // 현재 플레이어의 위치 데이터 생성
-                    int x = myself.getX();
-                    int y = myself.getY();
-                    ChatMsg message = new ChatMsg(userName, "player_position", myPlayerNum + "@@" + x + "," + y);
-
-                    // 서버로 데이터 전송
-                    if (message != null) {
-                        oos.writeObject(message);
-                    }
-
-                    // 지정된 시간만큼 대기
-                    Thread.sleep(300);
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     //서버로부터 메시지 수신
     class ServerMessageListener extends Thread {
 
         private final ObjectInputStream ois;
-        private GamePanel gamePanel; // GamePanel에 대한 참조 추가
         public ServerMessageListener(ObjectInputStream ois) {
             this.ois = ois;
         }
@@ -351,13 +239,9 @@ public class GamePanel extends JLayeredPane {
                         switch (msg.getCode()) {
                             case "update_position":
                                 // 다른 플레이어의 위치 업데이트
-                             //   updatePlayerFromServer(msg.getData()); 수정진행중(통신최적화)
-                                // 다른 플레이어의 위치 업데이트 수정진행중(통신최적화)
                                     updatePlayerFromServer(msg.getData());
                                 break;
                             case "player_move":
-                                // 다른 플레이어의 움직임 처리
-                                //processPlayerMove(msg.getData());
                                 // 다른 플레이어의 움직임 처리
                                 SwingUtilities.invokeLater(() -> {
                                     processPlayerMove(msg.getData());
@@ -391,84 +275,10 @@ public class GamePanel extends JLayeredPane {
             // 현재 플레이어와 다른 플레이어의 움직임을 업데이트
             if (playerNumber != myPlayerNum) {
                 Player otherPlayer = playerNumber == 1 ? player1 : player2;
-               // stage1.checkCollisions(); //수정
                 otherPlayer.setX(x); //(기능 구현 중) -이전 코드
                 otherPlayer.setY(y);//(기능 구현 중) -이전 코드
-
-                // 인터폴레이션을 사용하여 점진적으로 목표 위치로 이동
-                //interpolatePlayerPosition(otherPlayer, x, y); //(기능 구현 중)
                 repaint(); // 화면을 다시 그려서 변경 사항 반영
             }
         }
-        // 플레이어 위치를 점진적으로 목표 위치로 이동시키는 메서드
-        private void interpolatePlayerPosition(Player player, int targetX, int targetY) {
-            // 이동 속도나 인터폴레이션 비율을 설정
-            final float interpolationRate = 0.1f;
-            int newX = (int)(player.getX() + (targetX - player.getX()) * interpolationRate);
-            int newY = (int)(player.getY() + (targetY - player.getY()) * interpolationRate);
-
-            player.setX(newX);
-            player.setY(newY);
-        }
-
-        // 서버로부터 받은 위치 데이터를 사용하여 플레이어 위치 업데이트
-        private void updatePlayerPositionFromServer(Player player, int newX, int newY) {
-            // 서버로부터 받은 위치로 플레이어 위치 설정
-            player.setX(newX);
-            player.setY(newY);
-
-            // 중력 적용
-            if (!player.isOnGround()) {
-                player.setVelocityY(player.getVelocityY() + Player.GRAVITY);
-            } else {
-                player.setVelocityY(0);
-            }
-
-            player.update(); // 플레이어의 위치 업데이트
-
-            // 충돌 처리
-            stage1.checkCollisions();
-        }
-
-        //플레이어가 창 경계 넘지 않도록 (근데 안됨)
-        private void updatePlayerPosition(Player player) {
-
-            int newX = player.getX();
-            int newY = player.getY();
-
-            // 수평 이동 처리
-            if (leftPressed) {
-                newX -= MOVE_SPEED;
-            }
-            if (rightPressed) {
-                newX += MOVE_SPEED;
-            }
-
-            // 수직 이동 처리
-            if (upPressed) {
-                newY -= MOVE_SPEED;
-            }
-            if (downPressed) {
-                newY += MOVE_SPEED;
-            }
-
-            // 플레이어가 창의 경계를 넘지 않도록 위치를 조정
-            newX = Math.max(newX, 0); // 왼쪽 경계
-            newX = Math.min(newX, panelWidth - player.getWidth()); // 오른쪽 경계
-
-            newY = Math.max(newY, 0); // 상단 경계
-            newY = Math.min(newY, panelHeight - player.getHeight()); // 하단 경계
-
-            // 플레이어 위치 업데이트
-            player.setX(newX);
-            player.setY(newY);
-        }
-
-
-
-
     }
-
-
-
 }
