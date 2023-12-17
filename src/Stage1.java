@@ -38,7 +38,7 @@ public class Stage1 {
 
 
         // 도착 지점 생성, 예를 들어 x 좌표가 590인 지점에 도착 지점 설정
-        finishLine = new Platform(400, 432, 50, 70,"Image/Item/door2.png");
+        finishLine = new Platform(400, 444, 70, 60,"Image/Item/door3.png");
         platforms.add(finishLine);
 
         platforms.add(new Platform(590, 115, 100, 100, "Image/Item/door.png"));
@@ -123,8 +123,6 @@ public class Stage1 {
             }
         }
     }
-
-
 }
 
 
