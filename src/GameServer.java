@@ -99,7 +99,7 @@ public class GameServer extends JFrame {
         public void run() {
             while (true) { // 사용자 접속을 계속해서 받기 위해 while문
                 try {
-                    AppendText("Waiting new clients ...");
+                    //AppendText("Waiting new clients ...");
                     client_socket = socket.accept(); // accept가 일어나기 전까지는 무한 대기중
                     //AppendText("새로운 참가자 from " + client_socket);
                     // User 당 하나씩 Thread 생성
@@ -107,7 +107,7 @@ public class GameServer extends JFrame {
                     UserService new_user = new UserService(client_socket, playerCount);
                     UserVec.add(new_user); // 새로운 참가자 배열에 추가
                     new_user.start(); // 만든 객체의 스레드 실행
-                    AppendText("현재 참가자 수 " + UserVec.size()); //연결된 사용자를 저장할 벡터
+                    //AppendText("현재 참가자 수 " + UserVec.size()); //연결된 사용자를 저장할 벡터
                 } catch (IOException e) {
                     AppendText("accept() error");
                     // System.exit(0);
@@ -152,8 +152,7 @@ public class GameServer extends JFrame {
                 oos.flush();
                 ois = new ObjectInputStream(client_socket.getInputStream());
 
-                AppendText("입장!!!!!!!!!");
-                WriteOne("게임에 들어오신 것을 환엽합니다", "101");
+                //AppendText("입장!!!!!!!!!"); //이게 중복돼서 생성됨
 
             } catch (Exception e) {
                 AppendText("userService error");
@@ -265,6 +264,13 @@ public class GameServer extends JFrame {
                                 String winnerMessage = chatMsg.getData();
                                 WriteAll(winnerMessage, "game_result");
                                 break;
+
+                            case "Welcome": // 사용자 입장 메시지
+                                UserName = chatMsg.getId();
+                                String entranceMsg = chatMsg.getData();
+                                AppendText(entranceMsg); // 서버 화면에 입장 메시지 출력
+                                break;
+
                         }
 
                         // 두 명의 플레이어가 모두 연결되었고, 게임이 아직 시작되지 않았을 때

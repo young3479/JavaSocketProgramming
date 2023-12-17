@@ -102,7 +102,7 @@ public class GameWaitingPanel extends JFrame {
 
                 // 서버로 사용자 이름 전송 (입장 메시지 포함)
                 String welcomeMessage = username + "님이 입장하셨습니다.";
-                out.writeObject(new ChatMsg(username, "101", welcomeMessage));
+                out.writeObject(new ChatMsg(username, "Welcome", welcomeMessage));
                 out.flush();
 
                 new Thread(() -> {
@@ -137,8 +137,9 @@ public class GameWaitingPanel extends JFrame {
 
             String ip = txtIpAddress.getText().trim();
             int port = Integer.parseInt(txtPortNumber.getText().trim());
+            String userName = txtUserName.getText().trim();
 
-            GamePanel gamePanel = new GamePanel(player1, player2, myPlayerNum, ip, port);
+            GamePanel gamePanel = new GamePanel(player1, player2, myPlayerNum, ip, port, userName);
             setContentPane(gamePanel);
             pack();
             gamePanel.requestFocusInWindow();

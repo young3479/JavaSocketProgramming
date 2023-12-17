@@ -46,10 +46,11 @@ public class GamePanel extends JLayeredPane {
     /**
      * Create the panel.
      */
-    public GamePanel(Player player1, Player player2, int myPlayerNum, String ip, int port) {
+    public GamePanel(Player player1, Player player2, int myPlayerNum, String ip, int port, String userName) {
         this.player1 = player1;
         this.player2 = player2;
         this.myPlayerNum = myPlayerNum;
+        this.userName = userName;
 //        this.oos = oos;
 //        this.ois = ois;
 
@@ -117,7 +118,7 @@ public class GamePanel extends JLayeredPane {
     }
 
 
-    // 승자가 결정되었을 때 호출되는 메서드
+    // 승자가 결정되었을 때 호출되는 메서드 (이긴사람의 번호!!!)
     private void switchToEndingPanel(int winnerPlayerNum) {
         GameEndingPanel endingPanel = new GameEndingPanel(winnerPlayerNum);
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
