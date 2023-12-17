@@ -255,6 +255,11 @@ public class GameServer extends JFrame {
 
                         // 클라이언트로부터 받은 메시지 처리
                         switch (chatMsg.getCode()) {
+                            case "update_position":
+                                // Handle player position updates
+                                String positionData = chatMsg.getData();
+                                WriteOthers(positionData, "update_position");
+                                break;
                             case "101": // 사용자 입장 메시지
                                 UserName = chatMsg.getId();
                                 String entranceMsg = chatMsg.getData();

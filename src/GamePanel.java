@@ -6,8 +6,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.awt.Graphics;
+import java.util.Set;
 
 import javax.swing.*;
 
@@ -104,11 +106,12 @@ public class GamePanel extends JLayeredPane {
             while (true) {
                 try {
 
-                    // 플레이어의 위치와 상태를 업데이트
-                    player1.update();
-                    player2.update();
-                    // 충돌 처리
-                    stage1.checkCollisions(); //수정 성공 (중력 구현)
+//                    // 플레이어의 위치와 상태를 업데이트
+//                    player1.update();
+//                    player2.update();
+//                    // 충돌 처리
+//                    stage1.checkCollisions(); //수정 성공 (중력 구현)
+                    gameControll();
 //여기 함수 어떻게 순서 정할지도 중요한듯
                     repaint();
                     Thread.sleep(20); //수정 초기값 20
@@ -161,7 +164,14 @@ public class GamePanel extends JLayeredPane {
             // 연결 오류 처리
         }
     }
+    public void gameControll() {
 
+
+                    player1.update();
+                    player2.update();
+                    // 충돌 처리
+                    stage1.checkCollisions(); //수정 성공 (중력 구현)
+    }
 
     // 플레이어 위치 업데이트 메서드
     private void updatePlayerPosition(Player player, boolean left, boolean right, boolean up, boolean down) {
@@ -171,14 +181,7 @@ public class GamePanel extends JLayeredPane {
         }
 
 
-// 중력 적용
-        if (!player.isOnGround()) {
-            player.setVelocityY(player.getVelocityY() + Player.GRAVITY);
-        } else {
-            player.setVelocityY(0);
-        }
-
-        // 수평 이동
+// 수평 이동
         if (left) {
             player.setVelocityX(-MOVE_SPEED);
         } else if (right) {
@@ -187,9 +190,15 @@ public class GamePanel extends JLayeredPane {
             player.setVelocityX(0); // 왼쪽이나 오른쪽이 눌리지 않으면 수평 속도를 0으로 설정
         }
 
-        // 점프
-        if (up && player.isOnGround()) {
+        // 점프 체크
+
+       if (up && player.isOnGround()) {
             player.jump();
+        }
+
+        // 중력 적용 (점프 후에 중력을 적용하도록 순서 변경)
+        if (!player.isOnGround()) {
+            player.setVelocityY(player.getVelocityY() + Player.GRAVITY);
         }
 
 
@@ -218,65 +227,34 @@ public class GamePanel extends JLayeredPane {
         }
     }
     class KeyListener extends KeyAdapter {
+        private Set<Integer> pressedKeys = new HashSet<>();
         @Override
         public void keyPressed(KeyEvent e) {
-            Player currentPlayer = myPlayerNum == 1 ? player1 : player2;
-            // 상대 플레이어 결정
-            boolean movementUpdated = false;
-
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_LEFT:
-                    leftPressed = true;
-                    movementUpdated = true;
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    rightPressed = true;
-                    movementUpdated = true;
-                    break;
-                case KeyEvent.VK_UP:
-                    upPressed = true;
-                    movementUpdated = true;
-                    break;
-                case KeyEvent.VK_DOWN:
-                    downPressed = true;
-                    movementUpdated = true;
-                    break;
-            }
-
-            if (movementUpdated && oos != null) { // oos가 null이 아닐 때만 실행
-                updatePlayerPosition(currentPlayer, leftPressed, rightPressed, upPressed, downPressed);
-                sendPlayerMovement("keyPressed:" + e.getKeyCode());
-            }
+            pressedKeys.add(e.getKeyCode());
+            updateMovement();
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-            Player currentPlayer = myPlayerNum == 1 ? player1 : player2;
-            boolean movementUpdated = false;
+            pressedKeys.remove(e.getKeyCode());
+            updateMovement();
+        }
+        private void updateMovement() {
+            boolean left = pressedKeys.contains(KeyEvent.VK_LEFT);
+            boolean right = pressedKeys.contains(KeyEvent.VK_RIGHT);
+            boolean up = pressedKeys.contains(KeyEvent.VK_UP);
+            boolean down = pressedKeys.contains(KeyEvent.VK_DOWN);
 
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_LEFT:
-                    leftPressed = false;
-                    movementUpdated = true;
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    rightPressed = false;
-                    movementUpdated = true;
-                    break;
-                case KeyEvent.VK_UP:
-                    upPressed = false;
-                    movementUpdated = true;
-                    break;
-                case KeyEvent.VK_DOWN:
-                    downPressed = false;
-                    movementUpdated = true;
-                    break;
+            if (oos != null) { // Check if the ObjectOutputStream is not null
+                Player currentPlayer = myPlayerNum == 1 ? player1 : player2;
+                updatePlayerPosition(currentPlayer, left, right, up, down);
+                sendPlayerMovement(generateMovementString(left, right, up, down));
             }
-
-            if (movementUpdated && oos != null) { // oos가 null이 아닐 때만 실행
-                updatePlayerPosition(currentPlayer, leftPressed, rightPressed, upPressed, downPressed);
-                sendPlayerMovement("keyReleased:" + e.getKeyCode());
-            }
+        }
+        private String generateMovementString(boolean left, boolean right, boolean up, boolean down) {
+            // Create a string representing the current movement state
+            // Example: "Left:True, Right:False, Up:True, Down:False"
+            return "Left:" + left + ", Right:" + right + ", Up:" + up + ", Down:" + down;
         }
     }
 
@@ -292,6 +270,7 @@ public class GamePanel extends JLayeredPane {
     }
 
     public void updatePlayerFromServer(String playerInfo) {
+        SwingUtilities.invokeLater(() -> {
         String[] parts = playerInfo.split("@@");
         int playerNum = Integer.parseInt(parts[0]);
         String[] position = parts[1].split(",");
@@ -308,16 +287,39 @@ public class GamePanel extends JLayeredPane {
 
         // 화면을 다시 그려 변경 사항 반영
         repaint();
+        });
     }
 
 
+    class SendThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    // 현재 플레이어의 위치 데이터 생성
+                    int x = myself.getX();
+                    int y = myself.getY();
+                    ChatMsg message = new ChatMsg(userName, "player_position", myPlayerNum + "@@" + x + "," + y);
 
+                    // 서버로 데이터 전송
+                    if (message != null) {
+                        oos.writeObject(message);
+                    }
+
+                    // 지정된 시간만큼 대기
+                    Thread.sleep(300);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     //서버로부터 메시지 수신
     class ServerMessageListener extends Thread {
 
         private final ObjectInputStream ois;
-
+        private GamePanel gamePanel; // GamePanel에 대한 참조 추가
         public ServerMessageListener(ObjectInputStream ois) {
             this.ois = ois;
         }
@@ -334,9 +336,7 @@ public class GamePanel extends JLayeredPane {
                                 // 다른 플레이어의 위치 업데이트
                              //   updatePlayerFromServer(msg.getData()); 수정진행중(통신최적화)
                                 // 다른 플레이어의 위치 업데이트 수정진행중(통신최적화)
-                                SwingUtilities.invokeLater(() -> {
                                     updatePlayerFromServer(msg.getData());
-                                });
                                 break;
                             case "player_move":
                                 // 다른 플레이어의 움직임 처리
