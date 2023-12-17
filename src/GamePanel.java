@@ -46,6 +46,9 @@ public class GamePanel extends JLayeredPane {
 
     private ObjectInputStream ois;
 
+    int panelWidth = 730;
+    int panelHeight = 730;
+
 
     /**
      * Create the panel.
@@ -82,6 +85,8 @@ public class GamePanel extends JLayeredPane {
 
         // 서버에 연결
         connectToServer(ip, port);
+
+        setPreferredSize(new Dimension(panelWidth, panelHeight));
     }
 
     @Override
@@ -111,7 +116,7 @@ public class GamePanel extends JLayeredPane {
 //                    player2.update();
 //                    // 충돌 처리
 //                    stage1.checkCollisions(); //수정 성공 (중력 구현)
-                    gameControll();
+                    //gameControll();
 //여기 함수 어떻게 순서 정할지도 중요한듯
                     repaint();
                     Thread.sleep(20); //수정 초기값 20
@@ -179,40 +184,52 @@ public class GamePanel extends JLayeredPane {
         if (oos == null) {
             return; // ObjectOutputStream이 초기화되지 않았다면 함수 종료
         }
-
-
-// 수평 이동
         if (left) {
-            player.setVelocityX(-MOVE_SPEED);
-        } else if (right) {
-            player.setVelocityX(MOVE_SPEED);
-        } else {
-            player.setVelocityX(0); // 왼쪽이나 오른쪽이 눌리지 않으면 수평 속도를 0으로 설정
+            player.setX(player.getX() - MOVE_SPEED);
         }
-
-        // 점프 체크
-
-       if (up && player.isOnGround()) {
-            player.jump();
-        }
-
-        // 중력 적용 (점프 후에 중력을 적용하도록 순서 변경)
-        if (!player.isOnGround()) {
-            player.setVelocityY(player.getVelocityY() + Player.GRAVITY);
-        }
-
-
-        player.update(); // 플레이어의 위치 업데이트
-
-
-        // 충돌 처리
-        stage1.checkCollisions();
-
-
-
-        // 위치가 변경되면 서버에 전송
+        if (right) {
+            player.setX(player.getX() + MOVE_SPEED);
+        }if (up) {
+            player.setY(player.getY() - MOVE_SPEED);
+        }if (down) {
+            player.setY(player.getY() + MOVE_SPEED);
+        }// 위치가 변경되면 서버에 전송
         sendPlayerPosition(player);
     }
+
+
+
+//// 수평 이동
+//        if (left) {
+//            player.setVelocityX(-MOVE_SPEED);
+//        } else if (right) {
+//            player.setVelocityX(MOVE_SPEED);
+//        } else {
+//            player.setVelocityX(0); // 왼쪽이나 오른쪽이 눌리지 않으면 수평 속도를 0으로 설정
+//        }
+//
+//        // 점프 체크
+//
+//       if (up && player.isOnGround()) {
+//            player.jump();
+//        }
+//
+//        // 중력 적용 (점프 후에 중력을 적용하도록 순서 변경)
+//        if (!player.isOnGround()) {
+//            player.setVelocityY(player.getVelocityY() + Player.GRAVITY);
+//        }
+//
+//
+//        player.update(); // 플레이어의 위치 업데이트
+//
+//
+//        // 충돌 처리
+//        stage1.checkCollisions();
+//
+//
+//
+//        // 위치가 변경되면 서버에 전송
+//        sendPlayerPosition(player);
 
 
 
@@ -282,11 +299,11 @@ public class GamePanel extends JLayeredPane {
         playerToUpdate.setX(x);
         playerToUpdate.setY(y);
 
-// 중력 적용 및 위치 업데이트
-        playerToUpdate.update(); //수정성공 (중력 기능구현)
-
-        // 화면을 다시 그려 변경 사항 반영
-        repaint();
+//// 중력 적용 및 위치 업데이트
+//        playerToUpdate.update(); //수정성공 (중력 기능구현)
+//
+//        // 화면을 다시 그려 변경 사항 반영
+//        repaint();
         });
     }
 
@@ -375,11 +392,11 @@ public class GamePanel extends JLayeredPane {
             if (playerNumber != myPlayerNum) {
                 Player otherPlayer = playerNumber == 1 ? player1 : player2;
                // stage1.checkCollisions(); //수정
-                //otherPlayer.setX(x); //(기능 구현 중) -이전 코드
-                //otherPlayer.setY(y);//(기능 구현 중) -이전 코드
+                otherPlayer.setX(x); //(기능 구현 중) -이전 코드
+                otherPlayer.setY(y);//(기능 구현 중) -이전 코드
 
                 // 인터폴레이션을 사용하여 점진적으로 목표 위치로 이동
-                interpolatePlayerPosition(otherPlayer, x, y); //(기능 구현 중)
+                //interpolatePlayerPosition(otherPlayer, x, y); //(기능 구현 중)
                 repaint(); // 화면을 다시 그려서 변경 사항 반영
             }
         }
@@ -411,6 +428,40 @@ public class GamePanel extends JLayeredPane {
 
             // 충돌 처리
             stage1.checkCollisions();
+        }
+
+        //플레이어가 창 경계 넘지 않도록 (근데 안됨)
+        private void updatePlayerPosition(Player player) {
+
+            int newX = player.getX();
+            int newY = player.getY();
+
+            // 수평 이동 처리
+            if (leftPressed) {
+                newX -= MOVE_SPEED;
+            }
+            if (rightPressed) {
+                newX += MOVE_SPEED;
+            }
+
+            // 수직 이동 처리
+            if (upPressed) {
+                newY -= MOVE_SPEED;
+            }
+            if (downPressed) {
+                newY += MOVE_SPEED;
+            }
+
+            // 플레이어가 창의 경계를 넘지 않도록 위치를 조정
+            newX = Math.max(newX, 0); // 왼쪽 경계
+            newX = Math.min(newX, panelWidth - player.getWidth()); // 오른쪽 경계
+
+            newY = Math.max(newY, 0); // 상단 경계
+            newY = Math.min(newY, panelHeight - player.getHeight()); // 하단 경계
+
+            // 플레이어 위치 업데이트
+            player.setX(newX);
+            player.setY(newY);
         }
 
 

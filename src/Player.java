@@ -19,6 +19,12 @@ class Player implements Serializable {
     private boolean onGround; // 땅에 닿았는지 여부
     private static final int JUMP_VELOCITY = -20; // 점프 초기 속도
 
+    private int previousX, previousY; // 플레이어의 이전 위치
+
+    private int width; // 플레이어 이미지의 너비
+    private int height; // 플레이어 이미지의 높이
+
+
     public Player(int playerNum, int x, int y, String imagePath) {
         this.playerNum = playerNum;
         this.x = x;
@@ -55,6 +61,11 @@ class Player implements Serializable {
 
     // Player 클래스 내부의 update 메서드는 플레이어의 움직임을 계산합니다.
     public void update() {
+        // 현재 위치를 이전 위치로 저장
+        previousX = x;
+        previousY = y;
+
+        // 위치 및 속도 업데이트
         x += velocityX;
         if (!onGround) {
             velocityY += GRAVITY;
@@ -89,6 +100,15 @@ class Player implements Serializable {
         this.y = y;
     }
 
+    // 이전 X 위치를 반환하는 메서드
+    public int getPreviousX() {
+        return previousX;
+    }
+
+    // 이전 Y 위치를 반환하는 메서드
+    public int getPreviousY() {
+        return previousY;
+    }
     public int getX() {
         return x;
     }
@@ -99,6 +119,9 @@ class Player implements Serializable {
 
     public int getSize() {
         return SIZE;
+    }
+    public int getVelocityX() {
+        return velocityX;
     }
 
     public int getVelocityY() {
@@ -111,6 +134,17 @@ class Player implements Serializable {
 
     // 플레이어 번호를 반환하는 메서드
     public int getPlayerNum() { return playerNum; }
+
+    // 이미지의 너비를 반환하는 메서드
+    public int getWidth() {
+        return this.width;
+    }
+
+    // 이미지의 높이를 반환하는 메서드
+    public int getHeight() {
+        return this.height;
+    }
+
 
     // 네트워크 업데이트 메서드
     public void networkUpdate(NetworkHandler networkHandler) {

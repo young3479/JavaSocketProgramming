@@ -21,6 +21,7 @@ class Platform {
         return new Rectangle(x, y, width, height);
     }
 
+    public int getX() { return x; }
     public int getY() {
         return y;
     }
@@ -28,4 +29,5 @@ class Platform {
     public int getHeight() {
         return height;
     }
+    public int getWidth() { return width; }
 }

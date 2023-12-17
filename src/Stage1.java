@@ -96,23 +96,40 @@ public class Stage1 {
     private void checkCollisionForPlayer(Player player) {
         for (Platform platform : platforms) {
             if (player.getBounds().intersects(platform.getBounds())) {
-                // Collision from the top of the platform
-                if (player.getVelocityY() > 0) {
-                    player.setOnGround(true);
-                    player.setY(platform.getY() - player.getSize());
-                    player.setVelocityY(0);
+                // 반발력 설정
+                int reboundForceX = 10; // 수평 반발력의 크기
+                int reboundForceY = 10; // 수직 반발력의 크기
+
+                // 플레이어의 현재 속도와 위치를 고려하여 충돌 처리
+                int velocityX = player.getVelocityX();
+                int velocityY = player.getVelocityY();
+
+                // 수평 충돌 처리
+                if (Math.abs(velocityX) > 0) {
+                    player.setVelocityX((int) (-reboundForceX * Math.signum(velocityX)));
+                    player.setX(player.getPreviousX());
                 }
-                // Collision from below the platform
-                else if (player.getVelocityY() < 0) {
-                    player.setY(platform.getY() + platform.getHeight());
-                    player.setVelocityY(0); // Stop upward movement
+
+                // 수직 충돌 처리
+                if (Math.abs(velocityY) > 0) {
+                    player.setVelocityY((int) (-reboundForceY * Math.signum(velocityY)));
+                    player.setY(player.getPreviousY());
                 }
-                return;
+
+                // 플레이어의 위치를 플랫폼 경계 바깥으로 조정
+                // ...
+
+                break; // 하나의 플랫폼과 충돌이 감지되면 더 이상 검사할 필요 없음
             }
         }
-        player.setOnGround(false);
     }
 
 
-    // 필요한 경우 추가 메소드 구현
 }
+
+
+
+
+
+
+    // 필요한 경우 추가 메소드 구현
