@@ -80,7 +80,7 @@ public class Stage1 {
 
 
         // 도착 지점 생성
-        finishLine = new Platform(140, 290, 70, 60,"Image/Item/door3.png");
+        finishLine = new Platform(145, 290, 70, 60,"Image/Item/door3.png");
         platforms.add(finishLine);
 
         //platforms.add(new Platform(590, 115, 100, 100, "Image/Item/door.png"));

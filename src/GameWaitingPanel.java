@@ -139,13 +139,12 @@ public class GameWaitingPanel extends JFrame {
             int port = Integer.parseInt(txtPortNumber.getText().trim());
             String userName = txtUserName.getText().trim();
 
-            JFrame frame = new JFrame("Game");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             GamePanel gamePanel = new GamePanel(player1, player2, myPlayerNum, ip, port, userName);
-            frame.add(gamePanel);
-            frame.pack();
-            frame.setResizable(false); // 사용자가 크기를 변경할 수 없도록 설정
-            frame.setVisible(true);
+
+            setContentPane(gamePanel);
+            pack();
+            setResizable(false); // 사용자가 크기를 변경할 수 없도록 설정
+            setVisible(true);
 
             gamePanel.requestFocusInWindow();
         }
