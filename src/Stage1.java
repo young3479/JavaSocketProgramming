@@ -90,8 +90,8 @@ public class Stage1 {
 
     public boolean isMoveValid(int newX, int newY) {
         // 보정값 추가
-        int offsetX = 20; // 플레이어 위치의 오른쪽 보정값
-        int offsetY = 20; // 플레이어 위치의 아래쪽 보정값
+        int offsetX = 23; // 플레이어 위치의 오른쪽 보정값
+        int offsetY = 23; // 플레이어 위치의 아래쪽 보정값
 
         // 보정된 위치 계산
         int correctedX = newX + offsetX;
