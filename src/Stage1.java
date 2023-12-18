@@ -89,9 +89,19 @@ public class Stage1 {
     }
 
     public boolean isMoveValid(int newX, int newY) {
-        // 플레이어의 새로운 위치를 맵의 그리드에 매핑
-        int gridX = newX / platformWidth;
-        int gridY = newY / platformHeight;
+        // 보정값 추가
+        int offsetX = 5; // 플레이어 위치의 오른쪽 보정값
+        int offsetY = 5; // 플레이어 위치의 아래쪽 보정값
+        // 보정된 위치 계산
+        int correctedX = newX + offsetX;
+        int correctedY = newY + offsetY;
+        // 보정된 위치를 맵의 그리드에 매핑
+        int gridX = correctedX / platformWidth;
+        int gridY = correctedY / platformHeight;
+
+//        // 플레이어의 새로운 위치를 맵의 그리드에 매핑
+//        int gridX = newX / platformWidth;
+//        int gridY = newY / platformHeight;
 
         // 맵의 경계를 벗어나는 경우를 체크
         if (gridX < 0 || gridX >= mapColumns || gridY < 0 || gridY >= mapRows) {
