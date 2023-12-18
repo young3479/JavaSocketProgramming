@@ -88,7 +88,19 @@ public class Stage1 {
 
     }
 
+    public boolean isMoveValid(int newX, int newY) {
+        // 플레이어의 새로운 위치를 맵의 그리드에 매핑
+        int gridX = newX / platformWidth;
+        int gridY = newY / platformHeight;
 
+        // 맵의 경계를 벗어나는 경우를 체크
+        if (gridX < 0 || gridX >= mapColumns || gridY < 0 || gridY >= mapRows) {
+            return false;
+        }
+
+        // 해당 위치가 벽(1)인지 확인
+        return map[gridY][gridX] != 1;
+    }
     // 도착 지점에 도달했는지 확인하는 메서드
     public Player checkWinner() {
         if (player1.getBounds().intersects(finishLine.getBounds()) || player2.getBounds().intersects(finishLine.getBounds())) {

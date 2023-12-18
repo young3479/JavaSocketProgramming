@@ -146,21 +146,25 @@ public class GamePanel extends JLayeredPane {
 
     // 플레이어 위치 업데이트 메서드
     private void updatePlayerPosition(Player player, boolean left, boolean right, boolean up, boolean down) {
+        // 이동 전 위치 저장
+        int newX = player.getX();
+        int newY = player.getY();
 
         if (oos == null) {
             return; // ObjectOutputStream이 초기화되지 않았다면 함수 종료
         }
-        if (left) {
-            player.setX(player.getX() - MOVE_SPEED);
+        if (left) newX -= MOVE_SPEED;
+        if (right) newX += MOVE_SPEED;
+        if (up) newY -= MOVE_SPEED;
+        if (down) newY += MOVE_SPEED;
+       // sendPlayerPosition(player);
+
+        // 충돌 검사 및 서버로 위치 전송
+        if (stage1.isMoveValid(newX, newY)) {
+            player.setX(newX);
+            player.setY(newY);
+            sendPlayerPosition(player);
         }
-        if (right) {
-            player.setX(player.getX() + MOVE_SPEED);
-        }if (up) {
-            player.setY(player.getY() - MOVE_SPEED);
-        }if (down) {
-            player.setY(player.getY() + MOVE_SPEED);
-        }// 위치가 변경되면 서버에 전송
-        sendPlayerPosition(player);
     }
 
     class KeyListener extends KeyAdapter {
