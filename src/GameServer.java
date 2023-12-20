@@ -92,7 +92,7 @@ public class GameServer extends JFrame {
         contentPane.add(btnServerStart);
     }
 
-    // 새로운 참가자 accept() 하고 user thread를 새로 생성한다.
+    // 새로운 참가자 accept() 하고 user thread를 새로 생성
     class AcceptServer extends Thread {
         private int playerCount = 0;
         @SuppressWarnings("unchecked")
@@ -139,8 +139,6 @@ public class GameServer extends JFrame {
         private int playerNumber;
 
 
-        public int roomNum = 0;
-
         public UserService(Socket client_socket, int playerNumber) {
             // 매개변수로 넘어온 자료 저장
             this.client_socket = client_socket;
@@ -152,7 +150,7 @@ public class GameServer extends JFrame {
                 oos.flush();
                 ois = new ObjectInputStream(client_socket.getInputStream());
 
-                //AppendText("입장!!!!!!!!!"); //이게 중복돼서 생성됨
+                //AppendText("입장!!!!!!!!!");
 
             } catch (Exception e) {
                 AppendText("userService error");
@@ -182,13 +180,11 @@ public class GameServer extends JFrame {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-                //Logout(); // 에러가난 현재 객체를 벡터에서 지운다
                 // 창 닫으면 발생
-                AppendText("사용자 퇴장. 현재 참가자 수 " + UserVec.size());
+                //AppendText("사용자 퇴장. 현재 참가자 수 " + UserVec.size());
             }
         }
 
-        // 모든 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다
         // 모든 사용자에게 메시지 전송
         public void WriteAll(String msg, String code) {
             for (int i = 0; i < user_vc.size(); i++) {
@@ -197,7 +193,6 @@ public class GameServer extends JFrame {
             }
         }
 
-        // 나를 제외한 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
         public void WriteOthers(String msg, String code) {
             for (int i = 0; i < user_vc.size(); i++) {
                 UserService user = (UserService) user_vc.elementAt(i);
@@ -207,7 +202,6 @@ public class GameServer extends JFrame {
                 }
             }
         }
-
 
         public void WriteOneObject(Object ob) {
             try {
@@ -246,7 +240,7 @@ public class GameServer extends JFrame {
                                 String positionData = chatMsg.getData();
                                 WriteOthers(positionData, "update_position");
                                 break;
-                            case "player_position": // 플레이어 위치 정보 수신 (꼭필요!!!!!!)
+                            case "player_position": // 플레이어 위치 정보 수신
                                 String[] data = chatMsg.getData().split("@");
                                 int playerNumber = Integer.parseInt(data[0]);
                                 String position = data[1];

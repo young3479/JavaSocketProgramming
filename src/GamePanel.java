@@ -35,24 +35,13 @@ public class GamePanel extends JLayeredPane {
     private ObjectOutputStream oos;
 
     private Stage1 stage1; //맵추가
-
-    //private ObjectOutputStream oos;
     private ObjectInputStream ois;
 
-    int panelWidth = 730;
-    int panelHeight = 730;
-
-
-    /**
-     * Create the panel.
-     */
     public GamePanel(Player player1, Player player2, int myPlayerNum, String ip, int port, String userName) {
         this.player1 = player1;
         this.player2 = player2;
         this.myPlayerNum = myPlayerNum;
         this.userName = userName;
-//        this.oos = oos;
-//        this.ois = ois;
 
         // 플레이어 객체 할당
         if (myPlayerNum == 1)
@@ -62,7 +51,8 @@ public class GamePanel extends JLayeredPane {
 
         // 배경 색 설정 및 기타 설정
         setOpaque(true);
-        this.setBackground(Color.WHITE);
+        //this.setBackground(Color.WHITE);
+        this.setBackground(new Color(31, 26, 15));
         this.stage1 = new Stage1(player1, player2, this);
         this.addKeyListener(new KeyListener());
         this.requestFocus();
@@ -83,15 +73,6 @@ public class GamePanel extends JLayeredPane {
         stage1.draw(g); // Stage1 그리기
         player1.draw(g);
         player2.draw(g);
-    }
-
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void repaintPanel() {
-        repaint();
     }
 
     class GameThread extends Thread {
@@ -121,7 +102,7 @@ public class GamePanel extends JLayeredPane {
     }
 
 
-    // 승자가 결정되었을 때 호출되는 메서드 (이긴사람의 번호!!!)
+    // 승자가 결정되었을 때 호출되는 메서드 (이긴사람의 번호)
     private void switchToEndingPanel(int winnerPlayerNum) {
         GameEndingPanel endingPanel = new GameEndingPanel(winnerPlayerNum);
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
@@ -193,7 +174,7 @@ public class GamePanel extends JLayeredPane {
         }
     }
 
-    // 게임 패널 내 위치 정보 전송 메소드 추가 (꼭필요!!!!!! 있어야 코드 돌아감)
+    // 게임 패널 내 위치 정보 전송 메소드 추가
     public void sendPlayerPosition(Player player) {
         try {
             String positionData = player.getX() + "," + player.getY();
@@ -275,8 +256,8 @@ public class GamePanel extends JLayeredPane {
             // 현재 플레이어와 다른 플레이어의 움직임을 업데이트
             if (playerNumber != myPlayerNum) {
                 Player otherPlayer = playerNumber == 1 ? player1 : player2;
-                otherPlayer.setX(x); //(기능 구현 중) -이전 코드
-                otherPlayer.setY(y);//(기능 구현 중) -이전 코드
+                otherPlayer.setX(x);
+                otherPlayer.setY(y);
                 repaint(); // 화면을 다시 그려서 변경 사항 반영
             }
         }

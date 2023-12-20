@@ -17,7 +17,7 @@ class Platform {
         this.image = loadImage(imagePath);
     }
 
-        public void draw(Graphics g) {
+    public void draw(Graphics g) {
         g.drawImage(image, x, y, width, height, null);
     }
 

@@ -59,7 +59,7 @@ class Player implements Serializable {
         return onGround;
     }
 
-    // Player 클래스 내부의 update 메서드는 플레이어의 움직임을 계산합니다.
+    // Player 클래스 내부의 update 메서드는 플레이어의 움직임을 계산
     public void update() {
         // 현재 위치를 이전 위치로 저장
         previousX = x;

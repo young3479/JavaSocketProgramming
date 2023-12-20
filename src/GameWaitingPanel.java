@@ -108,7 +108,7 @@ public class GameWaitingPanel extends JFrame {
                 new Thread(() -> {
                     while (true) {
                         try {
-                            Object receivedObj = in.readObject(); //여기 체크!!!!
+                            Object receivedObj = in.readObject();
                             if (receivedObj instanceof ChatMsg chatMsg) {
                                 if (chatMsg.getCode().equals("PLAYER_NUMBER")) {
                                     // 서버로부터 플레이어 번호 받기

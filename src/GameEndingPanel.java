@@ -4,8 +4,8 @@ import java.awt.*;
 public class GameEndingPanel extends JPanel {
     public GameEndingPanel(int winnerPlayerNum){
         setLayout(new BorderLayout());
-        Color EmberColor = new Color(255, 200, 200); // 빨간색
-        Color WadeColor = new Color(195, 216, 255); // 파란색
+        Color EmberColor = new Color(255, 60, 0, 128); // 빨간색
+        Color WadeColor = new Color(71, 122, 255, 121); // 파란색
         Color WinnerColor = new Color(154, 184, 151); // 기본 배경색
         String winnerText;
 

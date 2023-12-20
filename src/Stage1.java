@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-//오픈소스 사용안한 클래스
 
 public class Stage1 {
     private ArrayList<Platform> platforms;
@@ -28,7 +27,7 @@ public class Stage1 {
             {1,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,1},
             {1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1},
             {1,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,1},
-            {1,0,1,1,0,0,1,0,1,0,0,1,0,1,1,1,1,1,0,1},
+            {1,0,1,0,0,0,1,0,1,0,0,1,0,1,1,1,1,1,0,1},
             {1,0,1,0,0,0,1,0,1,1,0,0,0,0,0,0,0,1,0,1},
             {1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0,1,0,1},
             {1,0,1,0,1,0,0,0,1,0,0,1,0,0,0,1,0,1,0,1},
@@ -58,33 +57,9 @@ public class Stage1 {
 
         initializePlatforms();
 
-
-        // 블럭추가
-
-//        // 상단
-//        platforms.add(new Platform(0, 0, panelWidth, borderThickness,"Image/block/block2.png"));
-//        // 하단
-//        platforms.add(new Platform(0, panelHeight - borderThickness, panelWidth, borderThickness, "Image/block/block2.png"));
-//        // 왼쪽
-//        platforms.add(new Platform(0, 0, borderThickness, panelHeight, "Image/block/block3.png"));
-//        // 오른쪽
-//        platforms.add(new Platform(panelWidth - borderThickness, 0, borderThickness, panelHeight, "Image/block/block3.png"));
-
-        // 계단
-//        platforms.add(new Platform(100, 500, 520, 20, "Image/block/block2.png"));
-//        platforms.add(new Platform(250, 400, 100, 20, "Image/block/block2.png"));
-//        platforms.add(new Platform(400, 300, 100, 20, "Image/block/block2.png"));
-//        platforms.add(new Platform(590, 200, 100, 20, "Image/block/block2.png"));
-//        platforms.add(new Platform(40, 200, 100, 20, "Image/block/block2.png"));
-
-
-
         // 도착 지점 생성
-        finishLine = new Platform(145, 290, 70, 60,"Image/Item/door3.png");
+        finishLine = new Platform(110, 300, 70, 60,"Image/Item/door3.png");
         platforms.add(finishLine);
-
-        //platforms.add(new Platform(590, 115, 100, 100, "Image/Item/door.png"));
-
 
     }
 
@@ -134,7 +109,6 @@ public class Stage1 {
         for (Platform platform : platforms) {
             platform.draw(g);
         }
-       // player.draw(g);
     }
 
     private void initializePlatforms() {
@@ -142,7 +116,7 @@ public class Stage1 {
             for (int j = 0; j < map[i].length; j++) {
                 if (map[i][j] == 1) {
                     // 플랫폼 생성 로직
-                    platforms.add(new Platform(j * platformWidth, i * platformHeight, platformWidth, platformHeight, "Image/block/block3.png"));
+                    platforms.add(new Platform(j * platformWidth, i * platformHeight, platformWidth, platformHeight, "Image/block/block9.png"));
                 }
                 // 다른 숫자에 대한 처리
             }
@@ -151,8 +125,3 @@ public class Stage1 {
 }
 
 
-
-
-
-
-    // 필요한 경우 추가 메소드 구현
